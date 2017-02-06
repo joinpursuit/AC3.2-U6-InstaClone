@@ -27,32 +27,32 @@ extension UIColor {
         }
         self.init(red: CGFloat(r) / 255, green: CGFloat(g) / 255, blue: CGFloat(b) / 255, alpha: CGFloat(a) / 255)
     }
-    func instaPrimary() -> UIColor {
+    static func instaPrimary() -> UIColor {
         return UIColor(hexString: "#607D8B")
     }
-    func instaPrimaryDark() -> UIColor {
+    static func instaPrimaryDark() -> UIColor {
         return UIColor(hexString: "#455A64")
     }
-    func instaPrimaryLight() -> UIColor {
+    static func instaPrimaryLight() -> UIColor {
         return UIColor(hexString: "#CFD8DC")
     }
-    func instaAccent() -> UIColor {
+    static func instaAccent() -> UIColor {
         return UIColor(hexString: "#FFD740")
     }
-    func instaPrimeText() -> UIColor {
+    static func instaPrimeText() -> UIColor {
         return UIColor(hexString: "#212121")
     }
-    func instaSecondaryText() -> UIColor {
+    static func instaSecondaryText() -> UIColor {
         return UIColor(hexString: "#727272")
     }
-    func instaDivider() -> UIColor {
+    static func instaDivider() -> UIColor {
         return UIColor(hexString: "#B6B6B6")
     }
-    func instaIconWhite() -> UIColor {
-        return UIColor(hexString: "#FFFFFF")
+    static func instaIconWhite() -> UIColor {
+        return UIColor(hexString: "#455A64")
     }
+    
 }
-
 
 
 

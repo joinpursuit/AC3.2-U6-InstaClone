@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1F37DA6C9C5B369ABCCBF44D /* Pods_InstaClone.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CD069F3EAA6F91E07E4E362 /* Pods_InstaClone.framework */; };
+		9E119EDB1E492BCB0010C395 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9E119EDA1E492BCB0010C395 /* GoogleService-Info.plist */; };
 		DE21AFF21E491B230088FC20 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE21AFF11E491B230088FC20 /* AppDelegate.swift */; };
 		DE21AFF91E491B230088FC20 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DE21AFF81E491B230088FC20 /* Assets.xcassets */; };
 		DE21AFFC1E491B230088FC20 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DE21AFFA1E491B230088FC20 /* LaunchScreen.storyboard */; };
@@ -20,6 +21,7 @@
 /* Begin PBXFileReference section */
 		23E0D2B88315AB68BED83600 /* Pods-InstaClone.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InstaClone.release.xcconfig"; path = "Pods/Target Support Files/Pods-InstaClone/Pods-InstaClone.release.xcconfig"; sourceTree = "<group>"; };
 		5CD069F3EAA6F91E07E4E362 /* Pods_InstaClone.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InstaClone.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9E119EDA1E492BCB0010C395 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D7B2E51238E0F4F2FC97BB11 /* Pods-InstaClone.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InstaClone.debug.xcconfig"; path = "Pods/Target Support Files/Pods-InstaClone/Pods-InstaClone.debug.xcconfig"; sourceTree = "<group>"; };
 		DE21AFEE1E491B230088FC20 /* InstaClone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InstaClone.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE21AFF11E491B230088FC20 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -96,6 +98,7 @@
 		DE21B00A1E4924C20088FC20 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				9E119EDA1E492BCB0010C395 /* GoogleService-Info.plist */,
 				DE21AFF11E491B230088FC20 /* AppDelegate.swift */,
 				DE21AFF81E491B230088FC20 /* Assets.xcassets */,
 				DE21AFFA1E491B230088FC20 /* LaunchScreen.storyboard */,
@@ -196,6 +199,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9E119EDB1E492BCB0010C395 /* GoogleService-Info.plist in Resources */,
 				DE21AFFC1E491B230088FC20 /* LaunchScreen.storyboard in Resources */,
 				DE21AFF91E491B230088FC20 /* Assets.xcassets in Resources */,
 			);

@@ -7,13 +7,18 @@
 //
 
 import UIKit
+import SnapKit
 
 class LoginViewController: UIViewController {
+    
+    
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .yellow
-        // Do any additional setup after loading the view.
+        view.backgroundColor = UIColor.instaPrimary()
+        navigationController?.navigationBar.barTintColor = UIColor.instaPrimaryDark()
+        tabBarController?.tabBar.backgroundColor = UIColor.instaPrimaryLight()
     }
 
     

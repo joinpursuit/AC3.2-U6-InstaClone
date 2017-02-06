@@ -31,7 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         mainViewController.tabBarItem = mainIcon
         self.window = UIWindow(frame: UIScreen.main.bounds)
         let tabBarController = UITabBarController()
-        
+        tabBarController.tabBar.tintColor = UIColor.instaAccent()
         tabBarController.viewControllers = [UINavigationController(rootViewController: mainViewController), UINavigationController(rootViewController: uploadViewController), UINavigationController(rootViewController: loginViewController)]
         
         self.window?.rootViewController = tabBarController

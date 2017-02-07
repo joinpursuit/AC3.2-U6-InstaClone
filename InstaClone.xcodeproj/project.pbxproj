@@ -284,11 +284,8 @@
 				060F4D581E498C14001B7475 /* CategoryListCollectionViewCell.swift in Sources */,
 				81661B411E492C8A0044756A /* WhiteBorderButton.swift in Sources */,
 				DE21B00F1E4926580088FC20 /* Utility.swift in Sources */,
-<<<<<<< HEAD
 				060F4D561E494B3B001B7475 /* CategoryListViewController.swift in Sources */,
-=======
 				DE21B0151E496A950088FC20 /* UnderlineTextField.swift in Sources */,
->>>>>>> 42cabd8849e18a41c890360842a28a80ac47aed4
 				81661B401E492C8A0044756A /* PhotoPickerCollectionView.swift in Sources */,
 				060F4D521E493D99001B7475 /* MainCollectionViewCell.swift in Sources */,
 				DE21B0061E491FF60088FC20 /* MainViewController.swift in Sources */,

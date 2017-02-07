@@ -17,6 +17,8 @@
 		DE21B0061E491FF60088FC20 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE21B0051E491FF60088FC20 /* MainViewController.swift */; };
 		DE21B0081E4920050088FC20 /* UploadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE21B0071E4920050088FC20 /* UploadViewController.swift */; };
 		DE21B00F1E4926580088FC20 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE21B00E1E4926580088FC20 /* Utility.swift */; };
+		DE21B0151E496A950088FC20 /* UnderlineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE21B0141E496A950088FC20 /* UnderlineTextField.swift */; };
+		DE21B0171E4A05550088FC20 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DE21B0161E4A05550088FC20 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +36,8 @@
 		DE21B0051E491FF60088FC20 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		DE21B0071E4920050088FC20 /* UploadViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UploadViewController.swift; sourceTree = "<group>"; };
 		DE21B00E1E4926580088FC20 /* Utility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
+		DE21B0141E496A950088FC20 /* UnderlineTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnderlineTextField.swift; sourceTree = "<group>"; };
+		DE21B0161E4A05550088FC20 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +109,7 @@
 				DE21AFFA1E491B230088FC20 /* LaunchScreen.storyboard */,
 				DE21AFFD1E491B230088FC20 /* Info.plist */,
 				DE21B00E1E4926580088FC20 /* Utility.swift */,
+				DE21B0161E4A05550088FC20 /* GoogleService-Info.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -128,6 +133,7 @@
 			children = (
 				81661B3E1E492C8A0044756A /* PhotoPickerCollectionView.swift */,
 				81661B3F1E492C8A0044756A /* WhiteBorderButton.swift */,
+				DE21B0141E496A950088FC20 /* UnderlineTextField.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -204,6 +210,7 @@
 			files = (
 				DE21AFFC1E491B230088FC20 /* LaunchScreen.storyboard in Resources */,
 				DE21AFF91E491B230088FC20 /* Assets.xcassets in Resources */,
+				DE21B0171E4A05550088FC20 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -264,6 +271,7 @@
 			files = (
 				81661B411E492C8A0044756A /* WhiteBorderButton.swift in Sources */,
 				DE21B00F1E4926580088FC20 /* Utility.swift in Sources */,
+				DE21B0151E496A950088FC20 /* UnderlineTextField.swift in Sources */,
 				81661B401E492C8A0044756A /* PhotoPickerCollectionView.swift in Sources */,
 				DE21B0061E491FF60088FC20 /* MainViewController.swift in Sources */,
 				DE21B0081E4920050088FC20 /* UploadViewController.swift in Sources */,

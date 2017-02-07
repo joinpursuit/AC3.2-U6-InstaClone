@@ -8,10 +8,14 @@
 
 import UIKit
 import FirebaseAuth
+import Firebase
 import SnapKit
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
     
+    let databaseReference = FIRDatabase.database().reference().child("users")
+    var databaseObserver: FIRDatabaseHandle?
+
     
     let buttonSize: CGSize = CGSize(width: 280, height: 60)
     
@@ -95,6 +99,21 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                     
                     // create a new user with the UID
                     // on completion, segue to profile screen
+                    let newUserRef = self.databaseReference.child(user!.uid)
+                    let newUserDetails: [String: AnyObject] = [
+                        "username" : username as AnyObject,
+                        "password" : password as AnyObject
+                    ]
+                    newUserRef.setValue(newUserDetails)
+                    newUserRef.setValue(newUserDetails, withCompletionBlock: { (error: Error?, reference: FIRDatabaseReference?) in
+                        if error != nil {
+                            print("Error creating new user: \(error)")
+                        }
+                        self.showOKAlert(title: "Success", message: "New user, \(username)", completion: { 
+                            print("complete.... now segue")
+                        })
+                    })
+                    
                     print("user: \(user!.email)")
                     print(user!.uid)
                     
@@ -103,6 +122,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             })
         }
     }
+    
     
     func didTapLoginButton() {
         print("login")
@@ -124,11 +144,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     
-    func showOKAlert(title: String, message: String?) {
+    func showOKAlert(title: String, message: String?, completion: (() -> Void)? = nil) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         alert.addAction(ok)
-        self.present(alert, animated: true, completion: nil)
+        self.present(alert, animated: true, completion: completion)
     }
     
     

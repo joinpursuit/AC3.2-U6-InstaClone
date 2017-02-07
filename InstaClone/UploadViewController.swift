@@ -35,11 +35,11 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         smallPhotoCollectionView.dataSource = self
         smallPhotoCollectionView.delegate = self
         super.viewDidLoad()
-        
         self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
         setUpIdentifiersAndCells()
         setUpViewHierarchyAndDelegates()
         configureConstraints()
+        view.backgroundColor = UIColor.instaPrimary()
     }
     
     override func viewDidLayoutSubviews() {

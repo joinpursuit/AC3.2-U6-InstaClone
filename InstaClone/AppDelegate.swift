@@ -17,8 +17,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
-//        FIRApp.configure()
+        FIRApp.configure()
         
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        self.window?.rootViewController = instaCloneTabBarController()
+        self.window?.makeKeyAndVisible()
+        
+        setNavigationTheme()
+        return true
+    }
+    
+    func setNavigationTheme() {
+        let navigationBarAppearace = UINavigationBar.appearance()
+        navigationBarAppearace.backgroundColor = UIColor.instaPrimaryLight()
+        navigationBarAppearace.barTintColor = UIColor.instaPrimaryDark()
+        navigationBarAppearace.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.white]
+        UIApplication.shared.statusBarStyle = .lightContent
+    }
+    
+    func instaCloneTabBarController() -> UITabBarController {
         let loginViewController = LoginViewController()
         let uploadViewController = UploadViewController()
         let mainViewController = MainViewController()
@@ -29,15 +46,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         loginViewController.tabBarItem = loginIcon
         uploadViewController.tabBarItem = uploadIcon
         mainViewController.tabBarItem = mainIcon
-        self.window = UIWindow(frame: UIScreen.main.bounds)
-        let tabBarController = UITabBarController()
         
+        let tabBarController = UITabBarController()
+        tabBarController.tabBar.tintColor = UIColor.instaAccent()
         tabBarController.viewControllers = [UINavigationController(rootViewController: mainViewController), UINavigationController(rootViewController: uploadViewController), UINavigationController(rootViewController: loginViewController)]
         
-        self.window?.rootViewController = tabBarController
-        self.window?.makeKeyAndVisible()
-        
-        return true
+        return tabBarController
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

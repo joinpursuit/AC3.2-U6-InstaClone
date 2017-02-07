@@ -26,7 +26,10 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     func setupViewHierarchy(){
         self.navigationItem.title = "CATEGORIES"
         self.navigationController?.navigationBar.barTintColor = UIColor.instaPrimaryDark()
+        self.navigationController?.navigationBar.tintColor = UIColor.instaAccent()
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+        let backButton = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        self.navigationItem.backBarButtonItem = backButton
         self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
         self.view.addSubview(mainCollectionV)
         mainCollectionV.register(MainCollectionViewCell.self, forCellWithReuseIdentifier: ReuseIdentifierForCell)

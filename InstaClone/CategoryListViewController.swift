@@ -22,9 +22,12 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
     func setupViewHierarchy(){
         self.navigationController?.navigationBar.barTintColor = UIColor.instaPrimaryDark()
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
+        let backButton = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        self.navigationItem.backBarButtonItem = backButton
         self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
 
         self.view.addSubview(categoryCollectionV)
+        
         categoryCollectionV.register(CategoryListCollectionViewCell.self, forCellWithReuseIdentifier: ReuseIdentifierForCell)
         
     }
@@ -43,7 +46,7 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifierForCell, for: indexPath) as! CategoryListCollectionViewCell
         
-        cell.indexPath = indexPath
+        cell.indexxx = indexPath
         
         //pass image and data to cell
         
@@ -54,14 +57,15 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
         }else{
             cell.backgroundColor = .red
         }
-        DispatchQueue.main.async {
-            cell.layoutIfNeeded()
-        }
+        cell.layoutIfNeeded()
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        //push detail view controller of selected photo
+        let photoDetail = PhotoDetailViewController()
+        //pass the title of photo to detail view
+        photoDetail.navigationItem.title = "selected photo name"
+        navigationController?.pushViewController(photoDetail, animated: true)
     }
     
     //MARK: - Lazy Inits

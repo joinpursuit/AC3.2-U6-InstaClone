@@ -23,6 +23,8 @@
 		DE21B00F1E4926580088FC20 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE21B00E1E4926580088FC20 /* Utility.swift */; };
 		DE21B0151E496A950088FC20 /* UnderlineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE21B0141E496A950088FC20 /* UnderlineTextField.swift */; };
 		DE21B0171E4A05550088FC20 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DE21B0161E4A05550088FC20 /* GoogleService-Info.plist */; };
+		DE21B0191E4A262B0088FC20 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE21B0181E4A262B0088FC20 /* ProfileViewController.swift */; };
+		DE21B01B1E4A53AB0088FC20 /* ActivityFeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE21B01A1E4A53AB0088FC20 /* ActivityFeedTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +48,8 @@
 		DE21B00E1E4926580088FC20 /* Utility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
 		DE21B0141E496A950088FC20 /* UnderlineTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnderlineTextField.swift; sourceTree = "<group>"; };
 		DE21B0161E4A05550088FC20 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		DE21B0181E4A262B0088FC20 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		DE21B01A1E4A53AB0088FC20 /* ActivityFeedTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityFeedTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +107,7 @@
 			isa = PBXGroup;
 			children = (
 				DE21B0031E491FD40088FC20 /* LoginViewController.swift */,
+				DE21B0181E4A262B0088FC20 /* ProfileViewController.swift */,
 				DE21B0051E491FF60088FC20 /* MainViewController.swift */,
 				060F4D551E494B3B001B7475 /* CategoryListViewController.swift */,
 				DE21B0071E4920050088FC20 /* UploadViewController.swift */,
@@ -146,6 +151,7 @@
 				060F4D511E493D99001B7475 /* MainCollectionViewCell.swift */,
 				060F4D571E498C14001B7475 /* CategoryListCollectionViewCell.swift */,
 				DE21B0141E496A950088FC20 /* UnderlineTextField.swift */,
+				DE21B01A1E4A53AB0088FC20 /* ActivityFeedTableViewCell.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -294,7 +300,9 @@
 >>>>>>> 11f8935921949a5eb45bbec06eceb95f6fa26d02
 				DE21B0061E491FF60088FC20 /* MainViewController.swift in Sources */,
 				DE21B0081E4920050088FC20 /* UploadViewController.swift in Sources */,
+				DE21B0191E4A262B0088FC20 /* ProfileViewController.swift in Sources */,
 				DE21B0041E491FD40088FC20 /* LoginViewController.swift in Sources */,
+				DE21B01B1E4A53AB0088FC20 /* ActivityFeedTableViewCell.swift in Sources */,
 				DE21AFF21E491B230088FC20 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

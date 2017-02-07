@@ -20,7 +20,6 @@ class PhotoPickerCollectionView: UICollectionView, UICollectionViewDelegateFlowL
         fatalError("init(coder:) has not been implemented")
     }
     
-    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
     }

@@ -140,12 +140,9 @@
 			children = (
 				81661B3E1E492C8A0044756A /* PhotoPickerCollectionView.swift */,
 				81661B3F1E492C8A0044756A /* WhiteBorderButton.swift */,
-<<<<<<< HEAD
 				060F4D511E493D99001B7475 /* MainCollectionViewCell.swift */,
 				060F4D571E498C14001B7475 /* CategoryListCollectionViewCell.swift */,
-=======
 				DE21B0141E496A950088FC20 /* UnderlineTextField.swift */,
->>>>>>> 42cabd8849e18a41c890360842a28a80ac47aed4
 			);
 			name = Views;
 			sourceTree = "<group>";

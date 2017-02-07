@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		060F4D521E493D99001B7475 /* MainCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060F4D511E493D99001B7475 /* MainCollectionViewCell.swift */; };
+		060F4D561E494B3B001B7475 /* CategoryListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060F4D551E494B3B001B7475 /* CategoryListViewController.swift */; };
+		060F4D581E498C14001B7475 /* CategoryListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060F4D571E498C14001B7475 /* CategoryListCollectionViewCell.swift */; };
 		1F37DA6C9C5B369ABCCBF44D /* Pods_InstaClone.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CD069F3EAA6F91E07E4E362 /* Pods_InstaClone.framework */; };
 		81661B401E492C8A0044756A /* PhotoPickerCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81661B3E1E492C8A0044756A /* PhotoPickerCollectionView.swift */; };
 		81661B411E492C8A0044756A /* WhiteBorderButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81661B3F1E492C8A0044756A /* WhiteBorderButton.swift */; };
@@ -22,6 +25,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		060F4D511E493D99001B7475 /* MainCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainCollectionViewCell.swift; sourceTree = "<group>"; };
+		060F4D551E494B3B001B7475 /* CategoryListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoryListViewController.swift; sourceTree = "<group>"; };
+		060F4D571E498C14001B7475 /* CategoryListCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoryListCollectionViewCell.swift; sourceTree = "<group>"; };
 		23E0D2B88315AB68BED83600 /* Pods-InstaClone.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InstaClone.release.xcconfig"; path = "Pods/Target Support Files/Pods-InstaClone/Pods-InstaClone.release.xcconfig"; sourceTree = "<group>"; };
 		5CD069F3EAA6F91E07E4E362 /* Pods_InstaClone.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InstaClone.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		81661B3E1E492C8A0044756A /* PhotoPickerCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoPickerCollectionView.swift; sourceTree = "<group>"; };
@@ -96,6 +102,7 @@
 			children = (
 				DE21B0031E491FD40088FC20 /* LoginViewController.swift */,
 				DE21B0051E491FF60088FC20 /* MainViewController.swift */,
+				060F4D551E494B3B001B7475 /* CategoryListViewController.swift */,
 				DE21B0071E4920050088FC20 /* UploadViewController.swift */,
 			);
 			name = "View Controllers";
@@ -133,7 +140,12 @@
 			children = (
 				81661B3E1E492C8A0044756A /* PhotoPickerCollectionView.swift */,
 				81661B3F1E492C8A0044756A /* WhiteBorderButton.swift */,
+<<<<<<< HEAD
+				060F4D511E493D99001B7475 /* MainCollectionViewCell.swift */,
+				060F4D571E498C14001B7475 /* CategoryListCollectionViewCell.swift */,
+=======
 				DE21B0141E496A950088FC20 /* UnderlineTextField.swift */,
+>>>>>>> 42cabd8849e18a41c890360842a28a80ac47aed4
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -269,10 +281,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				060F4D581E498C14001B7475 /* CategoryListCollectionViewCell.swift in Sources */,
 				81661B411E492C8A0044756A /* WhiteBorderButton.swift in Sources */,
 				DE21B00F1E4926580088FC20 /* Utility.swift in Sources */,
+				060F4D561E494B3B001B7475 /* CategoryListViewController.swift in Sources */,
 				DE21B0151E496A950088FC20 /* UnderlineTextField.swift in Sources */,
 				81661B401E492C8A0044756A /* PhotoPickerCollectionView.swift in Sources */,
+				060F4D521E493D99001B7475 /* MainCollectionViewCell.swift in Sources */,
 				DE21B0061E491FF60088FC20 /* MainViewController.swift in Sources */,
 				DE21B0081E4920050088FC20 /* UploadViewController.swift in Sources */,
 				DE21B0041E491FD40088FC20 /* LoginViewController.swift in Sources */,

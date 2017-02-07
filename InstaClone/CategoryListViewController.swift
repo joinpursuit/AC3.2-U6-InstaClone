@@ -1,79 +1,75 @@
 //
-//  MainViewController.swift
+//  CategoryListViewController.swift
 //  InstaClone
 //
-//  Created by Tom Seymour on 2/6/17.
+//  Created by Tong Lin on 2/6/17.
 //  Copyright © 2017 C4Q-3.2. All rights reserved.
 //
 
 import UIKit
-import SnapKit
 
-class MainViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
+class CategoryListViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
 
-    let categories = ["ANIMALS", "BEACH DAY", "LANDSCAPE", "CATS", "DOGS", "PIGS"]
-    let ReuseIdentifierForCell = "MainCell"
+    let ReuseIdentifierForCell = "someCellID"
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        view.backgroundColor = UIColor.instaPrimary()
 
         setupViewHierarchy()
         configureConstraints()
     }
     
     func setupViewHierarchy(){
-        self.navigationItem.title = "CATEGORIES"
         self.navigationController?.navigationBar.barTintColor = UIColor.instaPrimaryDark()
         self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
         self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
-        self.view.addSubview(mainCollectionV)
-        mainCollectionV.register(MainCollectionViewCell.self, forCellWithReuseIdentifier: ReuseIdentifierForCell)
+
+        self.view.addSubview(categoryCollectionV)
+        categoryCollectionV.register(CategoryListCollectionViewCell.self, forCellWithReuseIdentifier: ReuseIdentifierForCell)
         
     }
-
+    
     func configureConstraints(){
-        mainCollectionV.snp.makeConstraints { (view) in
-            view.leading.trailing.bottom.top.equalToSuperview()
+        categoryCollectionV.snp.makeConstraints { (view) in
+            view.top.bottom.leading.trailing.equalToSuperview()
         }
     }
     
     //MARK: - Collection View Delegate
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        print(categories.count)
-        return self.categories.count
+        return 20
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifierForCell, for: indexPath) as! MainCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifierForCell, for: indexPath) as! CategoryListCollectionViewCell
         
-        //testing data
-        cell.categoryLabel.text = categories[indexPath.row]
-        if indexPath.row%2 == 0{
+        cell.indexPath = indexPath
+        
+        //pass image and data to cell
+        
+        if indexPath.row%3 == 2{
+            cell.backgroundColor = .yellow
+        }else if indexPath.row%3 == 1{
             cell.backgroundColor = .cyan
         }else{
-            cell.backgroundColor = .lightGray
+            cell.backgroundColor = .red
         }
-        
-        //need image and categories names
-        //background imge capacity need to increase 10%
+        DispatchQueue.main.async {
+            cell.layoutIfNeeded()
+        }
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let categoryView = CategoryListViewController()
-        categoryView.navigationItem.title = categories[indexPath.row]
-        self.navigationController?.pushViewController(categoryView, animated: true)
+        //push detail view controller of selected photo
     }
     
-    //Mark: - Lazy Inits
-    lazy var mainCollectionV: UICollectionView = {
+    //MARK: - Lazy Inits
+    lazy var categoryCollectionV: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        layout.itemSize = CGSize(width: self.view.frame.width, height: self.view.frame.width/1.8)
-        
+        layout.itemSize = CGSize(width: self.view.frame.width/2, height: self.view.frame.width/2)
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
         
@@ -83,4 +79,5 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         cView.dataSource = self
         return cView
     }()
+
 }

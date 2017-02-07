@@ -17,6 +17,8 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        view.backgroundColor = UIColor.instaPrimary()
+
         setupViewHierarchy()
         configureConstraints()
     }

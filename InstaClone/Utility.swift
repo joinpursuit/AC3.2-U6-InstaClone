@@ -49,7 +49,7 @@ extension UIColor {
         return UIColor(hexString: "#B6B6B6")
     }
     static func instaIconWhite() -> UIColor {
-        return UIColor(hexString: "#455A64")
+        return UIColor(hexString: "#FFFFFF")
     }
     
 }

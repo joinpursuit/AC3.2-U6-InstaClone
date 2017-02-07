@@ -89,14 +89,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     func didTapRegisterButton() {
         print("register")
-        
         if let username = usernameTextField.text, let password = passwordTextField.text {
             FIRAuth.auth()?.createUser(withEmail: username, password: password, completion: { (user: FIRUser?, error: Error?) in
                 if error != nil {
                     print("error with completion: \(error!)")
                 }
                 if user != nil {
-                    
                     // create a new user with the UID
                     // on completion, segue to profile screen
                     let newUserRef = self.databaseReference.child(user!.uid)
@@ -109,9 +107,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                         if error != nil {
                             print("Error creating new user: \(error)")
                         }
-                        self.showOKAlert(title: "Success", message: "New user, \(username)", completion: { 
-                            print("complete.... now segue")
-                        })
+                        self.usernameTextField.text = nil
+                        self.passwordTextField.text = nil
+                        let profileView = ProfileViewController()
+                        profileView.navigationItem.title = username
+                        self.navigationController?.pushViewController(profileView, animated: true)
                     })
                     
                     print("user: \(user!.email)")
@@ -126,6 +126,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     func didTapLoginButton() {
         print("login")
+        
         if let username = usernameTextField.text,
             let password = passwordTextField.text{
             
@@ -136,13 +137,18 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 
                 if user != nil {
                     print("SUCCESS.... \(user!.uid)")
+                    self.usernameTextField.text = nil
+                    self.passwordTextField.text = nil
+                    let profileView = ProfileViewController()
+                    profileView.navigationItem.title = username
+                    self.navigationController?.pushViewController(profileView, animated: true)
+
                 } else {
                     self.showOKAlert(title: "Error", message: error?.localizedDescription)
                 }
             })
         }
     }
-    
     
     func showOKAlert(title: String, message: String?, completion: (() -> Void)? = nil) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
@@ -164,7 +170,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     lazy var usernameTextField: UnderlineTextField = {
         let view = UnderlineTextField()
         view.backgroundColor = .clear
-        view.attributedPlaceholder = NSAttributedString(string: " USERNAME", attributes: [NSForegroundColorAttributeName: UIColor.instaAccent(), NSFontAttributeName: myFont])
+        view.attributedPlaceholder = NSAttributedString(string: " EMAIL", attributes: [NSForegroundColorAttributeName: UIColor.instaAccent(), NSFontAttributeName: myFont])
         return view
     }()
     

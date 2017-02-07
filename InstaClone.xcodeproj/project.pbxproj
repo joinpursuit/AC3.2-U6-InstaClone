@@ -293,11 +293,8 @@
 				060F4D561E494B3B001B7475 /* CategoryListViewController.swift in Sources */,
 				DE21B0151E496A950088FC20 /* UnderlineTextField.swift in Sources */,
 				81661B401E492C8A0044756A /* PhotoPickerCollectionView.swift in Sources */,
-<<<<<<< HEAD
 				818F5F661E4A4629005D938F /* CategoryCell.swift in Sources */,
-=======
 				060F4D521E493D99001B7475 /* MainCollectionViewCell.swift in Sources */,
->>>>>>> 11f8935921949a5eb45bbec06eceb95f6fa26d02
 				DE21B0061E491FF60088FC20 /* MainViewController.swift in Sources */,
 				DE21B0081E4920050088FC20 /* UploadViewController.swift in Sources */,
 				DE21B0191E4A262B0088FC20 /* ProfileViewController.swift in Sources */,

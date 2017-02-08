@@ -9,9 +9,12 @@
 import UIKit
 import SnapKit
 import Photos
+import FirebaseStorage
+import FirebaseDatabase
+import FirebaseAuth
 
-enum CollectionViewIdentifier: String {
-    case smallPhoto, largePhoto
+enum ViewIdentifier: String {
+    case smallPhoto, largePhoto, overlay
 }
 
 class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITextFieldDelegate {
@@ -19,7 +22,10 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     let categories = ["ANIMALS", "BEACH DAY", "LANDSCAPE", "CATS", "DOGS", "PIGS", "EVAN"]
     var assests: PHFetchResult<PHAsset>!
     let imageManager = PHImageManager()
-
+    let storageManager = FIRStorage.storage()
+    let databaseManager = FIRDatabase.database().reference()
+    var currentCategory: String?
+    
     override func viewDidLoad() {
         view.backgroundColor = UIColor.instaPrimaryLight()
         super.viewDidLoad()
@@ -30,7 +36,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         view.backgroundColor = UIColor.instaPrimary()
         setUpPhotoFetcher()
         setUpNavigationItems()
-        
     }
     
     //MARK: - PhotoFetcher Functions
@@ -47,7 +52,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 cell.imageView.image = image
             }
         })
-
     }
     
     //MARK: - Views -- Set Up
@@ -65,6 +69,16 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         self.navigationItem.setRightBarButton(UIBarButtonItem(customView: button), animated: true)
     }
     
+    func setUpOverlay () {
+        let overlayView = UIView()
+        overlayView.backgroundColor = UIColor.black.withAlphaComponent(0.4)
+        overlayView.accessibilityIdentifier = ViewIdentifier.overlay.rawValue
+        self.view.addSubview(overlayView)
+        overlayView.snp.makeConstraints({ (view) in
+            view.top.trailing.bottom.leading.equalToSuperview()
+        })
+    }
+    
     func setUpViewHierarchyAndDelegates() {
         let views = [smallPhotoCollectionView, largePhotoCollectionView]
         _ = views.map{ $0.dataSource = self }
@@ -73,7 +87,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         _ = views.map{ self.view.addSubview($0) }
         self.view.addSubview(categoryScrollView)
         self.view.addSubview(titleTextField)
-//        self.navigationItem.setRightBarButton(UIBarButtonItem(customView: uploadButton), animated: true)
         largePhotoCollectionView.isPagingEnabled = true
     }
     
@@ -131,10 +144,10 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     func setUpIdentifiersAndCells() {
-        self.smallPhotoCollectionView.accessibilityIdentifier = CollectionViewIdentifier.smallPhoto.rawValue
+        self.smallPhotoCollectionView.accessibilityIdentifier = ViewIdentifier.smallPhoto.rawValue
         self.smallPhotoCollectionView.registerPhotoCell()
         
-        self.largePhotoCollectionView.accessibilityIdentifier = CollectionViewIdentifier.largePhoto.rawValue
+        self.largePhotoCollectionView.accessibilityIdentifier = ViewIdentifier.largePhoto.rawValue
         self.largePhotoCollectionView.registerPhotoCell()
     }
     
@@ -152,13 +165,13 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         guard let viewID = collectionView.accessibilityIdentifier else { return cell }
         
         switch viewID {
-        case CollectionViewIdentifier.smallPhoto.rawValue:
+        case ViewIdentifier.smallPhoto.rawValue:
             let smallPhotoCell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoPickerCollectionViewCell.cellID, for: indexPath) as! PhotoPickerCollectionViewCell
             
             self.getImage(for: smallPhotoCell, at: indexPath)
             
             return smallPhotoCell
-        case CollectionViewIdentifier.largePhoto.rawValue:
+        case ViewIdentifier.largePhoto.rawValue:
             let largePhotoCell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoPickerCollectionViewCell.cellID, for: indexPath) as! PhotoPickerCollectionViewCell
             
             self.getImage(for: largePhotoCell, at: indexPath)
@@ -170,17 +183,73 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if collectionView.accessibilityIdentifier ?? "" == CollectionViewIdentifier.smallPhoto.rawValue {
+        if collectionView.accessibilityIdentifier ?? "" == ViewIdentifier.smallPhoto.rawValue {
             self.largePhotoCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .left)
         }
     }
     
     //MARK: - Actions
     func didSelectCategoryButton (sender: WhiteBorderButton) {
-        
+        let buttons = self.categoryScrollView.subviews
+        _ = buttons.map {
+            if let button = $0 as? UIButton {
+                button.layer.borderColor = UIColor.instaIconWhite().cgColor
+                button.setTitleColor(UIColor.instaIconWhite(), for: .normal)
+            }
+        }
+        sender.layer.borderColor = UIColor.instaAccent().cgColor
+        sender.setTitleColor(UIColor.instaAccent(), for: .normal)
+        currentCategory = sender.title(for: .normal)
     }
     
+    
     func didPressUploadButton() {
+        
+        guard let title = self.titleTextField.text,
+            let category = self.currentCategory else {
+                self.showOKAlert(title: "Missing Title or Category", message: "Please make sure title and category are filled out")
+                return
+        }
+        if let currentUser = FIRAuth.auth()?.currentUser {
+            var data = Data()
+            let currentCell = largePhotoCollectionView.visibleCells.first! as! PhotoPickerCollectionViewCell
+            data = UIImageJPEGRepresentation(currentCell.imageView.image!, 0.8)!
+            // set upload path
+            //let filePath = "\(FIRAuth.auth()!.currentUser!.uid)/\("userPhoto")"
+            let metaData = FIRStorageMetadata()
+            metaData.contentType = "image/jpg"
+            let storageReference = self.storageManager.reference(forURL: "gs://fir-testapp-989e7.appspot.com")
+            
+            let uploadTask = storageReference.child("photos").put(data, metadata: metaData){(metaData,error) in
+                if let error = error {
+                    print(error.localizedDescription)
+                    return
+                } else {
+                    //store downloadURL
+                    let downloadURL = metaData!.downloadURL()!.absoluteString
+                    let photosDict: [String: AnyObject] = [
+                        "url" : downloadURL as AnyObject,
+                        "up" : 0 as AnyObject,
+                        "down" : 0 as AnyObject,
+                        "title" : title as AnyObject,
+                        "category" : category as AnyObject,
+                        "user" : currentUser.uid as AnyObject
+                    ]
+                    //store downloadURL at database
+                   let newReference = self.databaseManager.child("photos").childByAutoId()
+                    newReference.setValue(photosDict)
+                    // now need to get this photo id to the user
+                    print(newReference.key)
+                }
+            }
+            uploadTask.observe(.progress, handler: { (snapshot) in
+                
+                print(snapshot.progress?.fractionCompleted)
+            })
+            
+        } else {
+            self.showOKAlert(title: "Not Logged In", message: "Please log in or register to continue")
+        }
         print("I uploaded an image. LOL.")
     }
     
@@ -210,4 +279,11 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         view.textColor = UIColor.instaAccent()
         return view
     }()
+    
+    func showOKAlert(title: String, message: String?, completion: (() -> Void)? = nil) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
+        alert.addAction(ok)
+        self.present(alert, animated: true, completion: completion)
+    }
 }

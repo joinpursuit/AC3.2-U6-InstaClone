@@ -12,6 +12,8 @@ import Firebase
 
 class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    let databaseReference = FIRDatabase.database().reference().child("users")
+    
     static let activityFeedCellIdentifyer: String = "activityFeedCell"
     static let myFont = UIFont.systemFont(ofSize: 16)
 
@@ -24,21 +26,26 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         setConstraints()
         setNavigationBar()
         
-        
-        feedTableView.register(ActivityFeedTableViewCell.self, forCellReuseIdentifier: ProfileViewController.activityFeedCellIdentifyer)
-
-        
-        
-        
+        getCurrentUser()
     }
     
 
     
     // MARK: SET UP
     
+    func getCurrentUser() {
+        let userID = FIRAuth.auth()?.currentUser?.uid
+        _ = databaseReference.child(userID!).observe(.value, with: { (snapshot) in
+            if let userDict = snapshot.value as? NSDictionary {
+                self.navigationItem.title = userDict["username"] as? String
+            }
+        })
+    }
+    
     func setNavigationBar() {
         self.navigationItem.hidesBackButton = true
         let logoutButton = UIBarButtonItem(title: "LOGOUT", style: UIBarButtonItemStyle.plain, target: self, action: #selector(logoutTapped))
+        
         logoutButton.setTitleTextAttributes([NSFontAttributeName: ProfileViewController.myFont, NSForegroundColorAttributeName : UIColor.instaAccent()], for: .normal)
         self.navigationItem.rightBarButtonItem = logoutButton
     }
@@ -85,7 +92,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ProfileViewController.activityFeedCellIdentifyer, for: indexPath) as! ActivityFeedTableViewCell
         
-//        cell.profileImageView.image = #imageLiteral(resourceName: "user_icon")
+        cell.profileImageView.image = #imageLiteral(resourceName: "user_icon")
         cell.activityTextLabel.text = activities[indexPath.row]
         cell.activityDateLabel.text = "11:30PM"
         return cell
@@ -154,7 +161,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     lazy var feedTableView: UITableView = {
         let view = UITableView()
-
+        view.register(ActivityFeedTableViewCell.self, forCellReuseIdentifier: ProfileViewController.activityFeedCellIdentifyer)
         view.dataSource = self
         view.delegate = self
        return view

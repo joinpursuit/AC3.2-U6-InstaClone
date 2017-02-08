@@ -9,15 +9,21 @@
 import UIKit
 import SnapKit
 
-class MainViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
+class MainViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
-    let categories = ["ANIMALS", "BEACH DAY", "LANDSCAPE", "CATS", "DOGS", "PIGS"]
+    var animator: UIViewPropertyAnimator? // use to animate background image inside the cell.
+    var topCellIndex: IndexPath?
+    var normalSize: CGSize?
+    var largeSize: CGSize?
+    let categories = ["ANIMALS", "BEACH DAY", "LANDSCAPE", "CATS", "DOGS", "PIGS", "SPORTS", "MACRO", "PORTRAIT", "TRUMP"]
     let ReuseIdentifierForCell = "MainCell"
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         view.backgroundColor = UIColor.instaPrimary()
+        self.animator = UIViewPropertyAnimator(duration: 1.0, curve: .easeIn, animations: nil)
+        self.normalSize = CGSize(width: self.view.frame.width, height: self.view.frame.width/2.5)
+        self.largeSize = CGSize(width: self.view.frame.width, height: self.view.frame.width/1.8)
 
         setupViewHierarchy()
         configureConstraints()
@@ -70,12 +76,35 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         self.navigationController?.pushViewController(categoryView, animated: true)
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if let current = self.topCellIndex{
+            if indexPath == current{
+                self.animator?.addAnimations({
+                })
+                return largeSize!
+            }
+        }else{
+            if indexPath.row == 0{
+                return largeSize!
+            }
+        }
+        return normalSize!
+    }
+    
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        let currrentIndex = mainCollectionV.indexPathsForVisibleItems.sorted()[0]
+        self.topCellIndex = currrentIndex
+        print(currrentIndex.row)
+        self.mainCollectionV.reloadData()
+        self.mainCollectionV.scrollToItem(at: currrentIndex, at: UICollectionViewScrollPosition.top, animated: true)
+    }
+    
     //Mark: - Lazy Inits
     lazy var mainCollectionV: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        layout.itemSize = CGSize(width: self.view.frame.width, height: self.view.frame.width/1.8)
+        layout.itemSize = self.normalSize!
         
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0

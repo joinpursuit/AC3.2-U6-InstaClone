@@ -11,7 +11,7 @@ import SnapKit
 
 class MainViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
-    var animator: UIViewPropertyAnimator? // use to animate background image inside the cell.
+    var animator = UIViewPropertyAnimator(duration: 1.0, curve: .easeIn, animations: nil)
     var topCellIndex: IndexPath?
     var normalSize: CGSize?
     var largeSize: CGSize?
@@ -21,7 +21,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.instaPrimary()
-        self.animator = UIViewPropertyAnimator(duration: 1.0, curve: .easeIn, animations: nil)
         self.normalSize = CGSize(width: self.view.frame.width, height: self.view.frame.width/2.5)
         self.largeSize = CGSize(width: self.view.frame.width, height: self.view.frame.width/1.8)
 
@@ -50,20 +49,28 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     //MARK: - Collection View Delegate
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        print(categories.count)
         return self.categories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifierForCell, for: indexPath) as! MainCollectionViewCell
         
+        let imageView = UIImageView(frame: CGRect(x: 10, y: 10, width: cell.frame.width - 10, height: cell.frame.width - 10))
+//        let some = UIImage(named: "sample")
+//        let another = some?.cgImage
+//        let tempImage = CIImage(cgImage: another!)
+//        let brightnessFilter = CIFilter(name: "CIColorControls")!
+//        brightnessFilter.setValue(0.8, forKey: "inputImage")
+//        let newImage = UIImage(cgImage: CIContext(options: nil).createCGImage(tempImage, from: (brightnessFilter.outputImage?.extent)!)!)
+        imageView.contentMode = .scaleToFill
+        imageView.animationImages = [#imageLiteral(resourceName: "sample"), #imageLiteral(resourceName: "sample2")]
+        imageView.animationDuration = Double(arc4random_uniform(7
+            ) + 3)
+        imageView.animationRepeatCount = 0
+        imageView.startAnimating()
+        cell.backgroundView = imageView
         //testing data
         cell.categoryLabel.text = categories[indexPath.row]
-        if indexPath.row%2 == 0{
-            cell.backgroundColor = .cyan
-        }else{
-            cell.backgroundColor = .lightGray
-        }
         
         //need image and categories names
         //background imge capacity need to increase 10%
@@ -79,7 +86,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         if let current = self.topCellIndex{
             if indexPath == current{
-                self.animator?.addAnimations({
+                self.animator.addAnimations({
                 })
                 return largeSize!
             }

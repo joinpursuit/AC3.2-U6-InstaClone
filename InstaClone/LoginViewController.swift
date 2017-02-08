@@ -27,6 +27,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         view.backgroundColor = UIColor.instaPrimary()
         self.navigationItem.title = "LOGIN/REGISTER"
         
+        checkForCurrentUser()
         setUpViewHeirachy()
         setConstraints()
         setTextFieldDelegate()
@@ -34,6 +35,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     
     // MARK: SET UP
+    
+    func checkForCurrentUser() {
+        if FIRAuth.auth()?.currentUser != nil {
+            goToProfileView(animated: false)
+        }
+    }
     
     func setTextFieldDelegate() {
         passwordTextField.delegate = self
@@ -107,14 +114,11 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                         if error != nil {
                             print("Error creating new user: \(error)")
                         }
-                        self.goToProfileView(username: username)
+                        self.goToProfileView(animated: true)
                     })
-                    
-                    print("user: \(user!.email)")
-                    print(user!.uid)
-                    
                 } else {
-                    self.showOKAlert(title: "Error", message: error?.localizedDescription)                }
+                    self.showOKAlert(title: "Error", message: error?.localizedDescription)
+                }
             })
         }
     }
@@ -122,7 +126,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     func didTapLoginButton() {
         print("login")
-        
         if let username = usernameTextField.text,
             let password = passwordTextField.text{
             
@@ -132,7 +135,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 }
                 if user != nil {
                     print("SUCCESS.... \(user!.uid)")
-                    self.goToProfileView(username: username)
+                    self.goToProfileView(animated: true)
                 } else {
                     self.showOKAlert(title: "Error", message: error?.localizedDescription)
                 }
@@ -147,12 +150,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         self.present(alert, animated: true, completion: completion)
     }
     
-    func goToProfileView(username: String) {
+    func goToProfileView(animated: Bool) {
         self.usernameTextField.text = nil
         self.passwordTextField.text = nil
         let profileView = ProfileViewController()
-        //profileView.navigationItem.title = username
-        self.navigationController?.pushViewController(profileView, animated: true)
+//        self.navigationController?.viewControllers = [profileView]
+        self.navigationController?.pushViewController(profileView, animated: animated)
     }
     
     

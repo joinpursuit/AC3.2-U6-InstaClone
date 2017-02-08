@@ -12,15 +12,12 @@ import Firebase
 
 class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    
     let databaseReference = FIRDatabase.database().reference().child("users")
     
     static let activityFeedCellIdentifyer: String = "activityFeedCell"
     static let myFont = UIFont.systemFont(ofSize: 16)
 
     let activities: [String] = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
-    
-    var photosArr: [String] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,33 +25,22 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         setUpViewHeirachy()
         setConstraints()
         setNavigationBar()
-        let userID = FIRAuth.auth()?.currentUser?.uid
         
-        _ = databaseReference.child(userID!).observe(.value, with: { (snapshot) in
-            dump(snapshot)
-            if let userDict = snapshot.value as? NSDictionary {
-                self.navigationItem.title = userDict["username"] as? String
-                if let photoDict = userDict["photos"] as? NSDictionary {
-                    for photoKey in photoDict.allKeys {
-                        if let photoValue = photoDict[photoKey] as? String{
-                            self.photosArr.append(photoValue)
-                        }
-                    }
-                }
-            }
-        })
-        
-        
-        
-        
-        
-        
+        getCurrentUser()
     }
     
 
     
     // MARK: SET UP
     
+    func getCurrentUser() {
+        let userID = FIRAuth.auth()?.currentUser?.uid
+        _ = databaseReference.child(userID!).observe(.value, with: { (snapshot) in
+            if let userDict = snapshot.value as? NSDictionary {
+                self.navigationItem.title = userDict["username"] as? String
+            }
+        })
+    }
     
     func setNavigationBar() {
         self.navigationItem.hidesBackButton = true
@@ -100,13 +86,13 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     // MARK: - TABLEVIEW DATA SOURCE METHODS
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return photosArr.count
+        return activities.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ProfileViewController.activityFeedCellIdentifyer, for: indexPath) as! ActivityFeedTableViewCell
         
-//        cell.profileImageView.image = #imageLiteral(resourceName: "user_icon")
+        cell.profileImageView.image = #imageLiteral(resourceName: "user_icon")
         cell.activityTextLabel.text = activities[indexPath.row]
         cell.activityDateLabel.text = "11:30PM"
         return cell

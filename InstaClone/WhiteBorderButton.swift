@@ -13,10 +13,10 @@ class WhiteBorderButton: UIButton {
     override init(frame: CGRect) {
         super.init(frame: .zero)
         self.layer.borderWidth = 2.0
-        self.layer.borderColor = UIColor.instaIconWhite().cgColor
+        self.layer.borderColor = UIColor.white.cgColor
         self.setTitleColor(.white, for: .normal)
         self.titleLabel?.textAlignment = .center
-        //self.titleLabel?.font = UIFont
+        self.translatesAutoresizingMaskIntoConstraints = false
     }
     
     required init?(coder aDecoder: NSCoder) {

@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		060F4D521E493D99001B7475 /* MainCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060F4D511E493D99001B7475 /* MainCollectionViewCell.swift */; };
+		060F4D561E494B3B001B7475 /* CategoryListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060F4D551E494B3B001B7475 /* CategoryListViewController.swift */; };
+		060F4D581E498C14001B7475 /* CategoryListCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060F4D571E498C14001B7475 /* CategoryListCollectionViewCell.swift */; };
+		06C80F841E4A308000BEE5F9 /* PhotoDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C80F831E4A308000BEE5F9 /* PhotoDetailViewController.swift */; };
+		06C80F861E4B930700BEE5F9 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C80F851E4B930700BEE5F9 /* User.swift */; };
+		06C80F881E4B931D00BEE5F9 /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C80F871E4B931D00BEE5F9 /* Photo.swift */; };
+		06C80F8A1E4B932500BEE5F9 /* Vote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C80F891E4B932500BEE5F9 /* Vote.swift */; };
 		1F37DA6C9C5B369ABCCBF44D /* Pods_InstaClone.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CD069F3EAA6F91E07E4E362 /* Pods_InstaClone.framework */; };
 		81661B401E492C8A0044756A /* PhotoPickerCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81661B3E1E492C8A0044756A /* PhotoPickerCollectionView.swift */; };
 		81661B411E492C8A0044756A /* WhiteBorderButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81661B3F1E492C8A0044756A /* WhiteBorderButton.swift */; };
@@ -19,9 +26,18 @@
 		DE21B00F1E4926580088FC20 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE21B00E1E4926580088FC20 /* Utility.swift */; };
 		DE21B0151E496A950088FC20 /* UnderlineTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE21B0141E496A950088FC20 /* UnderlineTextField.swift */; };
 		DE21B0171E4A05550088FC20 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DE21B0161E4A05550088FC20 /* GoogleService-Info.plist */; };
+		DE21B0191E4A262B0088FC20 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE21B0181E4A262B0088FC20 /* ProfileViewController.swift */; };
+		DE21B01B1E4A53AB0088FC20 /* ActivityFeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE21B01A1E4A53AB0088FC20 /* ActivityFeedTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		060F4D511E493D99001B7475 /* MainCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainCollectionViewCell.swift; sourceTree = "<group>"; };
+		060F4D551E494B3B001B7475 /* CategoryListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoryListViewController.swift; sourceTree = "<group>"; };
+		060F4D571E498C14001B7475 /* CategoryListCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoryListCollectionViewCell.swift; sourceTree = "<group>"; };
+		06C80F831E4A308000BEE5F9 /* PhotoDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoDetailViewController.swift; sourceTree = "<group>"; };
+		06C80F851E4B930700BEE5F9 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		06C80F871E4B931D00BEE5F9 /* Photo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
+		06C80F891E4B932500BEE5F9 /* Vote.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vote.swift; sourceTree = "<group>"; };
 		23E0D2B88315AB68BED83600 /* Pods-InstaClone.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InstaClone.release.xcconfig"; path = "Pods/Target Support Files/Pods-InstaClone/Pods-InstaClone.release.xcconfig"; sourceTree = "<group>"; };
 		5CD069F3EAA6F91E07E4E362 /* Pods_InstaClone.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InstaClone.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		81661B3E1E492C8A0044756A /* PhotoPickerCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoPickerCollectionView.swift; sourceTree = "<group>"; };
@@ -38,6 +54,8 @@
 		DE21B00E1E4926580088FC20 /* Utility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
 		DE21B0141E496A950088FC20 /* UnderlineTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnderlineTextField.swift; sourceTree = "<group>"; };
 		DE21B0161E4A05550088FC20 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		DE21B0181E4A262B0088FC20 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		DE21B01A1E4A53AB0088FC20 /* ActivityFeedTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ActivityFeedTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,7 +113,10 @@
 			isa = PBXGroup;
 			children = (
 				DE21B0031E491FD40088FC20 /* LoginViewController.swift */,
+				DE21B0181E4A262B0088FC20 /* ProfileViewController.swift */,
 				DE21B0051E491FF60088FC20 /* MainViewController.swift */,
+				060F4D551E494B3B001B7475 /* CategoryListViewController.swift */,
+				06C80F831E4A308000BEE5F9 /* PhotoDetailViewController.swift */,
 				DE21B0071E4920050088FC20 /* UploadViewController.swift */,
 			);
 			name = "View Controllers";
@@ -117,6 +138,9 @@
 		DE21B00B1E4924D70088FC20 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				06C80F851E4B930700BEE5F9 /* User.swift */,
+				06C80F871E4B931D00BEE5F9 /* Photo.swift */,
+				06C80F891E4B932500BEE5F9 /* Vote.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -133,7 +157,10 @@
 			children = (
 				81661B3E1E492C8A0044756A /* PhotoPickerCollectionView.swift */,
 				81661B3F1E492C8A0044756A /* WhiteBorderButton.swift */,
+				060F4D511E493D99001B7475 /* MainCollectionViewCell.swift */,
+				060F4D571E498C14001B7475 /* CategoryListCollectionViewCell.swift */,
 				DE21B0141E496A950088FC20 /* UnderlineTextField.swift */,
+				DE21B01A1E4A53AB0088FC20 /* ActivityFeedTableViewCell.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -269,13 +296,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				06C80F881E4B931D00BEE5F9 /* Photo.swift in Sources */,
+				060F4D581E498C14001B7475 /* CategoryListCollectionViewCell.swift in Sources */,
 				81661B411E492C8A0044756A /* WhiteBorderButton.swift in Sources */,
 				DE21B00F1E4926580088FC20 /* Utility.swift in Sources */,
+				060F4D561E494B3B001B7475 /* CategoryListViewController.swift in Sources */,
 				DE21B0151E496A950088FC20 /* UnderlineTextField.swift in Sources */,
 				81661B401E492C8A0044756A /* PhotoPickerCollectionView.swift in Sources */,
+				06C80F841E4A308000BEE5F9 /* PhotoDetailViewController.swift in Sources */,
+				060F4D521E493D99001B7475 /* MainCollectionViewCell.swift in Sources */,
+				06C80F861E4B930700BEE5F9 /* User.swift in Sources */,
 				DE21B0061E491FF60088FC20 /* MainViewController.swift in Sources */,
+				06C80F8A1E4B932500BEE5F9 /* Vote.swift in Sources */,
 				DE21B0081E4920050088FC20 /* UploadViewController.swift in Sources */,
+				DE21B0191E4A262B0088FC20 /* ProfileViewController.swift in Sources */,
 				DE21B0041E491FD40088FC20 /* LoginViewController.swift in Sources */,
+				DE21B01B1E4A53AB0088FC20 /* ActivityFeedTableViewCell.swift in Sources */,
 				DE21AFF21E491B230088FC20 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

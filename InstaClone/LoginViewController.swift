@@ -8,14 +8,10 @@
 
 import UIKit
 import FirebaseAuth
-import Firebase
 import SnapKit
 
 class LoginViewController: UIViewController, UITextFieldDelegate {
     
-    let databaseReference = FIRDatabase.database().reference().child("users")
-    var databaseObserver: FIRDatabaseHandle?
-
     
     let buttonSize: CGSize = CGSize(width: 280, height: 60)
     
@@ -27,7 +23,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         view.backgroundColor = UIColor.instaPrimary()
         self.navigationItem.title = "LOGIN/REGISTER"
         
-        checkForCurrentUser()
         setUpViewHeirachy()
         setConstraints()
         setTextFieldDelegate()
@@ -35,12 +30,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     
     // MARK: SET UP
-    
-    func checkForCurrentUser() {
-        if FIRAuth.auth()?.currentUser != nil {
-            goToProfileView(animated: false)
-        }
-    }
     
     func setTextFieldDelegate() {
         passwordTextField.delegate = self
@@ -96,33 +85,24 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     func didTapRegisterButton() {
         print("register")
+        
         if let username = usernameTextField.text, let password = passwordTextField.text {
             FIRAuth.auth()?.createUser(withEmail: username, password: password, completion: { (user: FIRUser?, error: Error?) in
                 if error != nil {
                     print("error with completion: \(error!)")
                 }
                 if user != nil {
+                    
                     // create a new user with the UID
                     // on completion, segue to profile screen
-                    let newUserRef = self.databaseReference.child(user!.uid)
-                    let newUserDetails: [String: AnyObject] = [
-                        "username" : username as AnyObject,
-                        "password" : password as AnyObject
-                    ]
-                    newUserRef.setValue(newUserDetails)
-                    newUserRef.setValue(newUserDetails, withCompletionBlock: { (error: Error?, reference: FIRDatabaseReference?) in
-                        if error != nil {
-                            print("Error creating new user: \(error)")
-                        }
-                        self.goToProfileView(animated: true)
-                    })
+                    print("user: \(user!.email)")
+                    print(user!.uid)
+                    
                 } else {
-                    self.showOKAlert(title: "Error", message: error?.localizedDescription)
-                }
+                    self.showOKAlert(title: "Error", message: error?.localizedDescription)                }
             })
         }
     }
-    
     
     func didTapLoginButton() {
         print("login")
@@ -133,9 +113,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 if error != nil {
                     print("Erro \(error)")
                 }
+                
                 if user != nil {
                     print("SUCCESS.... \(user!.uid)")
-                    self.goToProfileView(animated: true)
                 } else {
                     self.showOKAlert(title: "Error", message: error?.localizedDescription)
                 }
@@ -143,19 +123,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    func showOKAlert(title: String, message: String?, completion: (() -> Void)? = nil) {
+    
+    func showOKAlert(title: String, message: String?) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         alert.addAction(ok)
-        self.present(alert, animated: true, completion: completion)
-    }
-    
-    func goToProfileView(animated: Bool) {
-        self.usernameTextField.text = nil
-        self.passwordTextField.text = nil
-        let profileView = ProfileViewController()
-//        self.navigationController?.viewControllers = [profileView]
-        self.navigationController?.pushViewController(profileView, animated: animated)
+        self.present(alert, animated: true, completion: nil)
     }
     
     
@@ -171,7 +144,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     lazy var usernameTextField: UnderlineTextField = {
         let view = UnderlineTextField()
         view.backgroundColor = .clear
-        view.attributedPlaceholder = NSAttributedString(string: " EMAIL", attributes: [NSForegroundColorAttributeName: UIColor.instaAccent(), NSFontAttributeName: myFont])
+        view.attributedPlaceholder = NSAttributedString(string: " USERNAME", attributes: [NSForegroundColorAttributeName: UIColor.instaAccent(), NSFontAttributeName: myFont])
         return view
     }()
     

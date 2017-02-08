@@ -227,7 +227,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 }
             }
             uploadTask.observe(.progress, handler: { (snapshot) in
-                
+                //To Do add in progressoverlay
                 print(snapshot.progress?.fractionCompleted)
             })
         } else {

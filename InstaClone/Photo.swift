@@ -13,13 +13,19 @@ class Photo{
     let title: String
     let category: String
     let time: String
-    let votes: [String: String]
+    var upCount: Int
+    var downCount: Int
+    let votes: String
     
-    init(photoID: String, title: String, category: String, time: String, votes: [String: String]) {
+    init(photoID: String, title: String, category: String, time: String, upCount: Int, downCount: Int, votes: String) {
         self.photoID = photoID
         self.title = title
         self.category = category
         self.time = time
-        self.votes = votes
+        self.upCount = upCount
+        self.downCount = downCount
+        self.votes = photoID
     }
+    
+    
 }

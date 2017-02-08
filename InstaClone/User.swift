@@ -10,9 +10,9 @@ import Foundation
 
 class User{
     let email: String
-    let profileImage: Photo?
-    let votes: [String: Bool]
-    let uploaded: [String]
+    var profileImage: Photo?
+    var votes: [String: Bool]
+    var uploaded: [String]
     
     init(email: String, profileImage: Photo?, votes: [String: Bool], uploaded: [String]) {
         self.email = email
@@ -20,6 +20,12 @@ class User{
         self.votes = votes
         self.uploaded = uploaded
     }
+    
+    convenience init(data: [String: AnyObject]) {
+        //parsing here
+        self.init(email: "", profileImage: nil, votes: [:], uploaded: [])
+    }
+    
     
     
 }

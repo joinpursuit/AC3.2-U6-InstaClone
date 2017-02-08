@@ -20,7 +20,9 @@ class PickerCollectionView: UICollectionView  {
         horizontalLayout.minimumLineSpacing = 0
         horizontalLayout.minimumInteritemSpacing = 0
         horizontalLayout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        
         super.init(frame: frame, collectionViewLayout: horizontalLayout)
+        
         self.layout = horizontalLayout
         self.showsVerticalScrollIndicator = false
     }
@@ -29,16 +31,8 @@ class PickerCollectionView: UICollectionView  {
         self.register(PhotoPickerCollectionViewCell.self, forCellWithReuseIdentifier: PhotoPickerCollectionViewCell.cellID)
     }
     
-    func registerCategoryCell() {
-        self.register(CategoryPickerCollectionViewCell.self, forCellWithReuseIdentifier: CategoryPickerCollectionViewCell.cellID)
-    }
-    
     func setUpItemLayout() {
-        if self.restorationIdentifier == CollectionViewIdentifier.category.rawValue {
-            layout.estimatedItemSize = .zero
-        } else {
-            layout.itemSize = CGSize(width: self.frame.height, height: self.frame.height)
-        }
+        layout.itemSize = CGSize(width: self.frame.height, height: self.frame.height)
     }
     
     
@@ -55,13 +49,12 @@ class PhotoPickerCollectionViewCell: UICollectionViewCell {
     
     var imageView: UIImageView = {
         let view = UIImageView()
-        view.contentMode = .scaleAspectFit
         return view
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = UIColor.white
+        self.backgroundColor = UIColor.instaPrimary()
         self.contentView.addSubview(imageView)
         configureConstraints()
     }

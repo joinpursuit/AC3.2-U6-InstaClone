@@ -8,13 +8,184 @@
 
 import UIKit
 import SnapKit
+import Photos
 
 enum CollectionViewIdentifier: String {
-    case smallPhoto, largePhoto, category
+    case smallPhoto, largePhoto
 }
 
-class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITextFieldDelegate {
+    
+    let categories = ["ANIMALS", "BEACH DAY", "LANDSCAPE", "CATS", "DOGS", "PIGS", "EVAN"]
+    var assests: PHFetchResult<PHAsset>!
+    let imageManager = PHImageManager()
 
+    override func viewDidLoad() {
+        view.backgroundColor = UIColor.instaPrimaryLight()
+        super.viewDidLoad()
+        self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
+        setUpIdentifiersAndCells()
+        setUpViewHierarchyAndDelegates()
+        configureConstraints()
+        view.backgroundColor = UIColor.instaPrimary()
+        setUpPhotoFetcher()
+        setUpNavigationItems()
+        
+    }
+    
+    //MARK: - PhotoFetcher Functions
+    
+    func setUpPhotoFetcher () {
+        let allPhotos = PHFetchOptions()
+        allPhotos.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+        self.assests = PHAsset.fetchAssets(with: .image, options: allPhotos)
+    }
+    
+    func getImage(for cell: PhotoPickerCollectionViewCell, at indexPath: IndexPath) {
+        imageManager.requestImage(for: self.assests[indexPath.row], targetSize: cell.frame.size, contentMode: .aspectFill, options: nil, resultHandler: { (image, dict) in
+            DispatchQueue.main.async {
+                cell.imageView.image = image
+            }
+        })
+
+    }
+    
+    //MARK: - Views -- Set Up
+    override func viewDidLayoutSubviews() {
+        self.smallPhotoCollectionView.setUpItemLayout()
+        self.largePhotoCollectionView.setUpItemLayout()
+    }
+    
+    func setUpNavigationItems() {
+        self.navigationItem.title = "UPLOAD"
+        let button: UIButton = UIButton()
+        button.setImage(UIImage(named: "up_arrow"), for: .normal)
+        button.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        button.addTarget(self, action: #selector(didPressUploadButton), for: .touchUpInside)
+        self.navigationItem.setRightBarButton(UIBarButtonItem(customView: button), animated: true)
+    }
+    
+    func setUpViewHierarchyAndDelegates() {
+        let views = [smallPhotoCollectionView, largePhotoCollectionView]
+        _ = views.map{ $0.dataSource = self }
+        _ = views.map{ $0.delegate = self }
+        self.titleTextField.delegate = self
+        _ = views.map{ self.view.addSubview($0) }
+        self.view.addSubview(categoryScrollView)
+        self.view.addSubview(titleTextField)
+//        self.navigationItem.setRightBarButton(UIBarButtonItem(customView: uploadButton), animated: true)
+        largePhotoCollectionView.isPagingEnabled = true
+    }
+    
+    func configureConstraints() {
+        smallPhotoCollectionView.snp.makeConstraints { (view) in
+            view.height.equalTo(self.view.snp.width).multipliedBy(0.29)
+            view.trailing.leading.bottom.equalToSuperview()
+        }
+        
+        titleTextField.snp.makeConstraints { (view) in
+            view.top.equalToSuperview()
+            view.leading.equalToSuperview().offset(6)
+            view.trailing.equalToSuperview().inset(6)
+            view.bottom.equalTo(categoryScrollView.snp.top).inset(-6)
+        }
+        
+        categoryScrollView.snp.makeConstraints { (view) in
+            view.leading.trailing.equalToSuperview()
+            view.bottom.equalTo(largePhotoCollectionView.snp.top)
+        }
+        
+        largePhotoCollectionView.snp.makeConstraints { (view) in
+            view.leading.trailing.equalToSuperview()
+            view.width.height.equalTo(self.view.snp.width)
+            view.bottom.equalTo(self.smallPhotoCollectionView.snp.top)
+        }
+        
+        for (index, category) in categories.enumerated() {
+            let buttons = categoryScrollView.subviews
+            let buttonToAdd = WhiteBorderButton()
+            buttonToAdd.contentEdgeInsets = UIEdgeInsets(top: 2, left: 16, bottom: 2, right: 16)
+            buttonToAdd.setTitle(category, for: .normal)
+            buttonToAdd.addTarget(self, action: #selector(didSelectCategoryButton(sender:)), for: .touchUpInside)
+            categoryScrollView.addSubview(buttonToAdd)
+            buttonToAdd.snp.remakeConstraints({ (view) in
+                
+                view.top.bottom.equalToSuperview()
+                
+                switch index {
+                case 0:
+                    view.leading.equalToSuperview().offset(8)
+                case categories.count - 1:
+                    view.trailing.equalToSuperview().inset(8)
+                    fallthrough
+                default:
+                    let previousButton = buttons[index - 1]
+                    view.leading.equalTo(previousButton.snp.trailing).offset(8)
+                }
+            })
+        }
+        categoryScrollView.snp.makeConstraints { (view) in
+            view.height.equalTo(categoryScrollView.subviews.first!.snp.height).offset(8)
+        }
+        
+    }
+    
+    func setUpIdentifiersAndCells() {
+        self.smallPhotoCollectionView.accessibilityIdentifier = CollectionViewIdentifier.smallPhoto.rawValue
+        self.smallPhotoCollectionView.registerPhotoCell()
+        
+        self.largePhotoCollectionView.accessibilityIdentifier = CollectionViewIdentifier.largePhoto.rawValue
+        self.largePhotoCollectionView.registerPhotoCell()
+    }
+    
+    //MARK: - CollectionView Delegate Methods
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return assests.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = UICollectionViewCell()
+        guard let viewID = collectionView.accessibilityIdentifier else { return cell }
+        
+        switch viewID {
+        case CollectionViewIdentifier.smallPhoto.rawValue:
+            let smallPhotoCell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoPickerCollectionViewCell.cellID, for: indexPath) as! PhotoPickerCollectionViewCell
+            
+            self.getImage(for: smallPhotoCell, at: indexPath)
+            
+            return smallPhotoCell
+        case CollectionViewIdentifier.largePhoto.rawValue:
+            let largePhotoCell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoPickerCollectionViewCell.cellID, for: indexPath) as! PhotoPickerCollectionViewCell
+            
+            self.getImage(for: largePhotoCell, at: indexPath)
+            return largePhotoCell
+        default:
+            break
+        }
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView.accessibilityIdentifier ?? "" == CollectionViewIdentifier.smallPhoto.rawValue {
+            self.largePhotoCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .left)
+        }
+    }
+    
+    //MARK: - Actions
+    func didSelectCategoryButton (sender: WhiteBorderButton) {
+        
+    }
+    
+    func didPressUploadButton() {
+        print("I uploaded an image. LOL.")
+    }
+    
+    //MARK: - Views
+    
     var smallPhotoCollectionView: PickerCollectionView = {
         let view = PickerCollectionView()
         return view
@@ -25,112 +196,18 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         return view
     }()
     
-    var categoryCollectionView: PickerCollectionView = {
-        let view = PickerCollectionView()
+    var categoryScrollView: UIScrollView = {
+        let view = UIScrollView()
+        view.alwaysBounceHorizontal = true
         return view
     }()
     
-    override func viewDidLoad() {
-        view.backgroundColor = .lightGray
-        smallPhotoCollectionView.dataSource = self
-        smallPhotoCollectionView.delegate = self
-        super.viewDidLoad()
-        self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
-        setUpIdentifiersAndCells()
-        setUpViewHierarchyAndDelegates()
-        configureConstraints()
-        view.backgroundColor = UIColor.instaPrimary()
-    }
-    
-    override func viewDidLayoutSubviews() {
-        self.smallPhotoCollectionView.setUpItemLayout()
-        self.largePhotoCollectionView.setUpItemLayout()
-        self.categoryCollectionView.setUpItemLayout()
-    }
-    
-    func configureConstraints() {
-        smallPhotoCollectionView.snp.makeConstraints { (view) in
-            view.height.equalTo(self.view.snp.width).multipliedBy(0.29)
-            view.trailing.leading.bottom.equalToSuperview()
-        }
-        
-        categoryCollectionView.snp.makeConstraints { (view) in
-            view.leading.top.trailing.equalToSuperview()
-            view.height.equalTo(32)
-        }
-        
-        largePhotoCollectionView.snp.makeConstraints { (view) in
-            view.leading.trailing.equalToSuperview()
-            view.width.height.equalTo(self.view.snp.width)
-            view.bottom.equalTo(self.smallPhotoCollectionView.snp.top)
-        }
-    }
-    
-    func setUpViewHierarchyAndDelegates() {
-        let views = [smallPhotoCollectionView, largePhotoCollectionView, categoryCollectionView]
-        _ = views.map{ self.view.addSubview($0) }
-        _ = views.map{ $0.delegate = self }
-        _ = views.map{ $0.dataSource = self }
-        
-        largePhotoCollectionView.isPagingEnabled = true
-    }
-    
-    func setUpIdentifiersAndCells() {
-        self.smallPhotoCollectionView.accessibilityIdentifier = CollectionViewIdentifier.smallPhoto.rawValue
-        self.smallPhotoCollectionView.registerPhotoCell()
-        
-        self.largePhotoCollectionView.accessibilityIdentifier = CollectionViewIdentifier.largePhoto.rawValue
-        self.largePhotoCollectionView.registerPhotoCell()
-        
-        self.categoryCollectionView.accessibilityIdentifier = CollectionViewIdentifier.category.rawValue
-        self.categoryCollectionView.registerCategoryCell()
-    }
-    
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = UICollectionViewCell()
-        guard let viewID = collectionView.accessibilityIdentifier else { return cell }
-        
-        switch viewID {
-        case CollectionViewIdentifier.smallPhoto.rawValue:
-            let smallPhotoCell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoPickerCollectionViewCell.cellID, for: indexPath) as! PhotoPickerCollectionViewCell
-            smallPhotoCell.imageView.image = #imageLiteral(resourceName: "user_icon")
-            smallPhotoCell.backgroundColor = .red
-            return smallPhotoCell
-        case CollectionViewIdentifier.largePhoto.rawValue:
-            let largePhotoCell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoPickerCollectionViewCell.cellID, for: indexPath) as! PhotoPickerCollectionViewCell
-            largePhotoCell.backgroundColor = .green
-            largePhotoCell.layer.borderWidth = 2.0
-            largePhotoCell.layer.borderColor = UIColor.white.cgColor
-
-            return largePhotoCell
-        case CollectionViewIdentifier.category.rawValue:
-            let categoryCell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoryPickerCollectionViewCell.cellID, for: indexPath) as! CategoryPickerCollectionViewCell
-            categoryCell.backgroundColor = .blue
-            categoryCell.button.setTitle(Array(repeating: "BB", count: indexPath.row + 1).joined(), for: .normal)
-            return categoryCell
-        default:
-            break
-        }
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        //If this causes a crash, something seriously wrong has happened becuse all the collectionViews should be Pickers.
-        let pickerCollectionView = collectionView as! PickerCollectionView
-        if collectionView.accessibilityIdentifier == CollectionViewIdentifier.category.rawValue {
-            let cell = CategoryPickerCollectionViewCell()
-            cell.button.setTitle(Array(repeating: "BB", count: indexPath.row + 1).joined(), for: .normal)
-            print(cell.contentView.frame.size)
-            return cell.contentView.frame.size
-        } else {
-            return pickerCollectionView.layout.itemSize
-        }
-    }
+    var titleTextField: UnderlineTextField = {
+        let view = UnderlineTextField()
+        view.backgroundColor = .clear
+        view.attributedPlaceholder = NSAttributedString(string: " TITLE", attributes: [NSForegroundColorAttributeName: UIColor.instaAccent(), NSFontAttributeName: UIFont.systemFont(ofSize: 24)])
+        view.font = UIFont.systemFont(ofSize: 24)
+        view.textColor = UIColor.instaAccent()
+        return view
+    }()
 }

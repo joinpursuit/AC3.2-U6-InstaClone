@@ -20,12 +20,4 @@ class User{
         self.votes = votes
         self.uploaded = uploaded
     }
-    
-    convenience init(data: [String: AnyObject]) {
-        //parsing here
-        self.init(email: "", profileImage: nil, votes: [:], uploaded: [])
-    }
-    
-    
-    
 }

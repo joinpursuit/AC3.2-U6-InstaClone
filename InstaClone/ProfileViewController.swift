@@ -12,10 +12,15 @@ import Firebase
 
 class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
+    
+    let databaseReference = FIRDatabase.database().reference().child("users")
+    
     static let activityFeedCellIdentifyer: String = "activityFeedCell"
     static let myFont = UIFont.systemFont(ofSize: 16)
 
     let activities: [String] = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+    
+    var photosArr: [String] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,10 +28,24 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         setUpViewHeirachy()
         setConstraints()
         setNavigationBar()
+        let userID = FIRAuth.auth()?.currentUser?.uid
+        
+        _ = databaseReference.child(userID!).observe(.value, with: { (snapshot) in
+            dump(snapshot)
+            if let userDict = snapshot.value as? NSDictionary {
+                self.navigationItem.title = userDict["username"] as? String
+                if let photoDict = userDict["photos"] as? NSDictionary {
+                    for photoKey in photoDict.allKeys {
+                        if let photoValue = photoDict[photoKey] as? String{
+                            self.photosArr.append(photoValue)
+                        }
+                    }
+                }
+            }
+        })
         
         
-        feedTableView.register(ActivityFeedTableViewCell.self, forCellReuseIdentifier: ProfileViewController.activityFeedCellIdentifyer)
-
+        
         
         
         
@@ -36,9 +55,11 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     // MARK: SET UP
     
+    
     func setNavigationBar() {
         self.navigationItem.hidesBackButton = true
         let logoutButton = UIBarButtonItem(title: "LOGOUT", style: UIBarButtonItemStyle.plain, target: self, action: #selector(logoutTapped))
+        
         logoutButton.setTitleTextAttributes([NSFontAttributeName: ProfileViewController.myFont, NSForegroundColorAttributeName : UIColor.instaAccent()], for: .normal)
         self.navigationItem.rightBarButtonItem = logoutButton
     }
@@ -79,7 +100,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     // MARK: - TABLEVIEW DATA SOURCE METHODS
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return activities.count
+        return photosArr.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -154,7 +175,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     lazy var feedTableView: UITableView = {
         let view = UITableView()
-
+        view.register(ActivityFeedTableViewCell.self, forCellReuseIdentifier: ProfileViewController.activityFeedCellIdentifyer)
         view.dataSource = self
         view.delegate = self
        return view

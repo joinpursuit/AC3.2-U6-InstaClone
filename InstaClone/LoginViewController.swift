@@ -107,11 +107,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                         if error != nil {
                             print("Error creating new user: \(error)")
                         }
-                        self.usernameTextField.text = nil
-                        self.passwordTextField.text = nil
-                        let profileView = ProfileViewController()
-                        profileView.navigationItem.title = username
-                        self.navigationController?.pushViewController(profileView, animated: true)
+                        self.goToProfileView(username: username)
                     })
                     
                     print("user: \(user!.email)")
@@ -134,15 +130,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 if error != nil {
                     print("Erro \(error)")
                 }
-                
                 if user != nil {
                     print("SUCCESS.... \(user!.uid)")
-                    self.usernameTextField.text = nil
-                    self.passwordTextField.text = nil
-                    let profileView = ProfileViewController()
-                    profileView.navigationItem.title = username
-                    self.navigationController?.pushViewController(profileView, animated: true)
-
+                    self.goToProfileView(username: username)
                 } else {
                     self.showOKAlert(title: "Error", message: error?.localizedDescription)
                 }
@@ -155,6 +145,14 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         alert.addAction(ok)
         self.present(alert, animated: true, completion: completion)
+    }
+    
+    func goToProfileView(username: String) {
+        self.usernameTextField.text = nil
+        self.passwordTextField.text = nil
+        let profileView = ProfileViewController()
+        //profileView.navigationItem.title = username
+        self.navigationController?.pushViewController(profileView, animated: true)
     }
     
     

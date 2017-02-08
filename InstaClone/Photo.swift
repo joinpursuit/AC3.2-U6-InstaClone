@@ -48,6 +48,7 @@ class Photo {
         // creating object in Photos node
         let photoRef = databasePhotoReference.childByAutoId()
         
+
         let uploadedPhoto = Photo(photoID: URL(string: photoRef.description())!.lastPathComponent, uploadedBy: FIRAuth.auth()!.currentUser!.uid, title: title, category: category, filePath: imagePath, date: dateString, time: timeString, upCount: 0, downCount: 0)
         
         let photoDetails : [String : AnyObject] = [

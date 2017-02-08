@@ -24,7 +24,7 @@ class Vote {
         // [START photo_vote_transaction]
         photoID.runTransactionBlock({ (currentData: FIRMutableData) -> FIRTransactionResult in
             if var data = currentData.value as? [String : AnyObject] {
-                var votes = data["vote"] as! [String : Int]
+                var votes = data["votes"] as! [String : Int]
                 var upvotes = votes["upvotes"]!
                 var downvotes = votes["downvotes"]!
                 

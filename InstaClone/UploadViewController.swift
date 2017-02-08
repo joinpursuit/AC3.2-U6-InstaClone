@@ -215,7 +215,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             let data = UIImageJPEGRepresentation(currentCell.imageView.image!, 0.8)!
             let metaData = FIRStorageMetadata()
             metaData.contentType = "image/jpg"
-            let storageReference = self.storageManager.reference(forURL: "gs://fir-testapp-989e7.appspot.com")
+            let storageReference = self.storageManager.reference()
             let imagePath = currentUser.uid + "/\(Int(Date.timeIntervalSinceReferenceDate * 1000)).jpg"
             
             let uploadTask = storageReference.child(imagePath).put(data, metadata: metaData){(metaData,error) in

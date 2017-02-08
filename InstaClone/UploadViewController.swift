@@ -211,42 +211,25 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 return
         }
         if let currentUser = FIRAuth.auth()?.currentUser {
-            var data = Data()
             let currentCell = largePhotoCollectionView.visibleCells.first! as! PhotoPickerCollectionViewCell
-            data = UIImageJPEGRepresentation(currentCell.imageView.image!, 0.8)!
-            // set upload path
-            //let filePath = "\(FIRAuth.auth()!.currentUser!.uid)/\("userPhoto")"
+            let data = UIImageJPEGRepresentation(currentCell.imageView.image!, 0.8)!
             let metaData = FIRStorageMetadata()
             metaData.contentType = "image/jpg"
             let storageReference = self.storageManager.reference(forURL: "gs://fir-testapp-989e7.appspot.com")
+            let imagePath = currentUser.uid + "/\(Int(Date.timeIntervalSinceReferenceDate * 1000)).jpg"
             
-            let uploadTask = storageReference.child("photos").put(data, metadata: metaData){(metaData,error) in
+            let uploadTask = storageReference.child(imagePath).put(data, metadata: metaData){(metaData,error) in
                 if let error = error {
                     print(error.localizedDescription)
                     return
                 } else {
-                    //store downloadURL
-                    let downloadURL = metaData!.downloadURL()!.absoluteString
-                    let photosDict: [String: AnyObject] = [
-                        "url" : downloadURL as AnyObject,
-                        "up" : 0 as AnyObject,
-                        "down" : 0 as AnyObject,
-                        "title" : title as AnyObject,
-                        "category" : category as AnyObject,
-                        "user" : currentUser.uid as AnyObject
-                    ]
-                    //store downloadURL at database
-                   let newReference = self.databaseManager.child("photos").childByAutoId()
-                    newReference.setValue(photosDict)
-                    // now need to get this photo id to the user
-                    print(newReference.key)
+                    Photo.createPhotoInDatabase(for: title, category: category, imagePath: imagePath)
                 }
             }
             uploadTask.observe(.progress, handler: { (snapshot) in
                 
                 print(snapshot.progress?.fractionCompleted)
             })
-            
         } else {
             self.showOKAlert(title: "Not Logged In", message: "Please log in or register to continue")
         }

@@ -7,23 +7,30 @@
 //
 
 import UIKit
+import FirebaseDatabase
+import FirebaseAuth
+import FirebaseStorage
 
 class CategoryListViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
-
-    let ReuseIdentifierForCell = "someCellID"
     
+    let ReuseIdentifierForCell = "someCellID"
+    var images: [Photo] = []
+    let databasePhotosReference = FIRDatabase.database().reference().child("photos")
+    let storageReference = FIRStorage.storage().reference()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         setupViewHierarchy()
         configureConstraints()
+        getImages()
     }
     
     func setupViewHierarchy(){
         let backButton = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         self.navigationItem.backBarButtonItem = backButton
         self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
-
+        
         self.view.addSubview(categoryCollectionV)
         categoryCollectionV.register(CategoryListCollectionViewCell.self, forCellWithReuseIdentifier: ReuseIdentifierForCell)
         
@@ -37,16 +44,27 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
     
     //MARK: - Collection View Delegate
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 20
+        return self.images.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifierForCell, for: indexPath) as! CategoryListCollectionViewCell
         
+        let currentPhoto = self.images[indexPath.row]
+        self.storageReference.child(currentPhoto.filePath).data(withMaxSize: 10 * 1024 * 1024) { (data, error) in
+            if error != nil {
+                print(error!.localizedDescription)
+            }
+            if let validData = data {
+                cell.BGImageView.image = UIImage(data: validData)
+                cell.layoutIfNeeded()
+            }
+        }
+
         cell.indexxx = indexPath
         
         //pass image and data to cell
-        
+        /*
         if indexPath.row%3 == 2{
             cell.backgroundColor = .yellow
             cell.BGImageView.image = #imageLiteral(resourceName: "sample")
@@ -57,6 +75,7 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
             cell.backgroundColor = .red
         }
         cell.layoutIfNeeded()
+        */
         return cell
     }
     
@@ -82,5 +101,26 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
         cView.dataSource = self
         return cView
     }()
-
+    
+    //MARK: Pull Category Images
+    
+    func getImages () {
+        guard let category = self.navigationItem.title else { return }
+        databasePhotosReference.child(category).observe(.value, with: { (snapshot) in
+            
+            let children = snapshot.children
+            while let child = children.nextObject() as? FIRDataSnapshot {
+                
+                if let photoDict = child.value as? NSDictionary,
+                    let photo = Photo(dict: photoDict, photoID: child.key) {
+                    self.images.append(photo)
+                }
+                
+                if self.images.count == Int(snapshot.childrenCount) {
+                    print(self.images.count)
+                    self.categoryCollectionV.reloadData()
+                }
+            }
+        })
+    }
 }

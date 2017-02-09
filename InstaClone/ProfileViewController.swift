@@ -67,28 +67,28 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func getUploadedImagePaths() {
         if let currentUserID = FIRAuth.auth()?.currentUser?.uid {
-            databaseUsersReference.child(currentUserID).child("photos").observe(.value, with: { (snapshot) in
-                if let allUserPhotos = snapshot.value as? NSDictionary {
-                    let userImageIDs = allUserPhotos.allKeys as! [String]
-                    
-                    for photoID in userImageIDs {
-                        
-                        guard let category = allUserPhotos[photoID] as? String else { continue }
+            let userPhotosReference = databaseUsersReference.child(currentUserID).child("photos")
+            userPhotosReference.observe(.value, with: { (snapshot) in
+                let allUserPhotos = snapshot.children
+                    while let photoSnapshot = allUserPhotos.nextObject() as? FIRDataSnapshot,
+                        let photoDict = photoSnapshot.value as? NSDictionary {
+                        guard let category = photoDict["category"] as? String else { continue }
+                            let photoID = photoSnapshot.key
                         let path = category + "/" + photoID
-                        self.databasePhotosReference.child(path).observe(.value, with: { (snapshot) in
-                            if let photoDictionary = snapshot.value as? NSDictionary,
+                        self.databasePhotosReference.child(path).observe(.value, with: { (photoInfoSnapshot) in
+                            if let photoDictionary = photoInfoSnapshot.value as? NSDictionary,
                                 let photo = Photo(dict: photoDictionary, photoID: photoID) {
-                                
+                                print("photo created")
                                 self.userImages.append(photo)
-                                
-                                if self.userImages.count == userImageIDs.count {
+                                print(snapshot.childrenCount)
+                                if self.userImages.count == Int(snapshot.childrenCount) {
+                                    print("reloading data")
                                     self.uploadedPhotosCollectionView.reloadData()
                                 }
                             } else {
                                 print("\(photoID) couldn't be parsed")
                             }
                         })
-                    }
                 }
             })
         }

@@ -56,7 +56,7 @@ class Photo {
         dateStringFormatter.dateFormat = "HH:mm:ss"
         let timeString = dateStringFormatter.string(from: date)
         
-        let databasePhotoReference = FIRDatabase.database().reference().child("photos")
+        let databasePhotoReference = FIRDatabase.database().reference().child("photos").child(category)
         let databaseUserReference = FIRDatabase.database().reference().child("users")
         
         // creating object in Photos node
@@ -91,7 +91,7 @@ class Photo {
             let userPhotoDirectory = databaseUserReference.child(FIRAuth.auth()!.currentUser!.uid).child("photos")
             let directoryAsURL = URL(string: photoRef.description())!
             let userPhotoDetail : [String : AnyObject ] = [
-                directoryAsURL.lastPathComponent : "\(uploadedPhoto.date)-\(uploadedPhoto.time)" as AnyObject
+                directoryAsURL.lastPathComponent : category as AnyObject
             ]
             userPhotoDirectory.updateChildValues(userPhotoDetail)
             

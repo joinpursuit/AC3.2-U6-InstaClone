@@ -23,7 +23,7 @@ enum UploadType {
 
 class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITextFieldDelegate {
     
-    let categories = MainViewController.categories
+    let categories = MainViewController.categories  
     var assests: PHFetchResult<PHAsset>!
     let imageManager = PHImageManager()
     let storageManager = FIRStorage.storage()

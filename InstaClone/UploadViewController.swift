@@ -310,6 +310,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     let progressLabel: UILabel = {
         let view = UILabel()
         view.textColor = UIColor.instaAccent()
+        view.textAlignment = .center
         view.font = UIFont.systemFont(ofSize: 18)
         return view
     }()
@@ -323,6 +324,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     //MARK: - Animations
     
     func animateSuccessLabel () {
+        self.progressLabel.text = "¡SUCCESS!"
         _ = progressContainterView.subviews.map {
             if $0 is UIProgressView {
                 $0.removeFromSuperview()
@@ -330,7 +332,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         }
 
         let animator = UIViewPropertyAnimator(duration: 0.75, curve: .easeOut, animations: {
-            self.progressLabel.text = "¡SUCCESS!"
             self.progressLabel.snp.remakeConstraints({ (view) in
                 view.centerY.centerX.equalToSuperview()
             })

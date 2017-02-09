@@ -96,5 +96,4 @@ class Photo {
         print(metadata.timeCreated)
     }
     */
-    
 }

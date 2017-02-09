@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 import Firebase
 
-class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource {
     
     let databaseReference = FIRDatabase.database().reference().child("users")
     
@@ -53,9 +53,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     func setUpViewHeirachy() {
         self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
         self.view.addSubview(yourUploadsLabel)
-        self.view.addSubview(scrollViewContainer)
         self.view.addSubview(feedTableView)
         self.view.addSubview(profileImageView)
+        self.view.addSubview(uploadedPhotosCollectionView)
     }
     
     func setConstraints() {
@@ -67,7 +67,8 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         feedTableView.snp.makeConstraints { (view) in
             view.leading.trailing.equalToSuperview()
             view.top.equalTo(profileImageView.snp.bottom)
-            view.bottom.equalTo(scrollViewContainer.snp.top)
+            view.bottom.equalTo(uploadedPhotosCollectionView.snp.top)
+            
         }
         
         yourUploadsLabel.snp.makeConstraints { (view) in
@@ -75,9 +76,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             view.height.equalTo(20)
         }
         
-        scrollViewContainer.snp.makeConstraints { (view) in
+        uploadedPhotosCollectionView.snp.makeConstraints { (view) in
+            view.top.equalTo(feedTableView.snp.bottom)
             view.leading.trailing.equalToSuperview()
-            view.height.equalTo(self.view.bounds.height * 0.15)
+            view.height.equalToSuperview().multipliedBy(0.15)
             view.bottom.equalTo(yourUploadsLabel.snp.top)
         }
     }
@@ -98,7 +100,22 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         return cell
     }
     
+    //MARK: - CollectionView Data Source Methods
     
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 5
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let smallPhotoCell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoPickerCollectionViewCell.cellID, for: indexPath) as! PhotoPickerCollectionViewCell
+        
+        smallPhotoCell.imageView.image = #imageLiteral(resourceName: "up_arrow")
+        return smallPhotoCell
+    }
     
     // MARK: - TARGET ACTION METHODS
     
@@ -120,10 +137,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         // show image picker for profile view
     }
     
-    
-    
     // MARK: - LAZY VIEW INITS
-
     
     lazy var profileImageView: UIImageView = {
         let view = UIImageView()
@@ -140,12 +154,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         view.layer.shadowOpacity = 0.8
         view.layer.shadowOffset = CGSize(width: 0, height: 5)
         view.layer.shadowRadius = 8
-        return view
-    }()
-    
-    lazy var scrollViewContainer: UIView = {
-       let view = UIView()
-        view.backgroundColor = UIColor.instaPrimary()
         return view
     }()
     
@@ -167,4 +175,8 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
        return view
     }()
     
+    var uploadedPhotosCollectionView: PickerCollectionView = {
+        let view = PickerCollectionView()
+        return view
+    }()
 }

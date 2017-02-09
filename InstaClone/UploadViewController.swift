@@ -23,7 +23,7 @@ enum UploadType {
 
 class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITextFieldDelegate {
     
-    let categories = MainViewController.categories  
+    let categories = MainViewController.categories
     var assests: PHFetchResult<PHAsset>!
     let imageManager = PHImageManager()
     let storageManager = FIRStorage.storage()
@@ -223,34 +223,31 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         }
         return cell
     }
-    /*
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        <#code#>
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if collectionView.accessibilityIdentifier == ViewIdentifier.smallPhoto.rawValue,
+            let photoCell = cell as? PhotoPickerCollectionViewCell {
+            if indexPath == largePhotoCollectionView.indexPathsForVisibleItems.first! {
+                photoCell.layer.borderWidth = 2.0
+                photoCell.layer.borderColor = UIColor.instaAccent().cgColor
+            } else {
+                photoCell.layer.borderWidth = 0.0
+            }
+        }
     }
     
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        let indexPath = self.largePhotoCollectionView.indexPathsForVisibleItems.first!
-        self.smallPhotoCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
-    }
-    
-    //    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-    //        let currrentCell = mainCollectionV.indexPathsForVisibleItems.sorted()
-    //        if currrentCell[0].row == 0{
-    //            topCellIndex = currrentCell[0]
-    //        }else if currrentCell[0] == topCellIndex{
-    //            topCellIndex = currrentCell[1]
-    //        }else{
-    //            topCellIndex = currrentCell[0]
-    //        }
-    //
-    //        self.mainCollectionV.reloadData()
-    //        self.mainCollectionV.scrollToItem(at: topCellIndex!, at: UICollectionViewScrollPosition.top, animated: true)
-    //    }
-    
-     */
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         self.largePhotoCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .left)
         self.smallPhotoCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+        
+        if let smallCells = smallPhotoCollectionView.visibleCells as? [PhotoPickerCollectionViewCell] {
+            _ = smallCells.map { $0.layer.borderWidth = 0 }
+        }
+        
+        if let cell = smallPhotoCollectionView.cellForItem(at: indexPath) as? PhotoPickerCollectionViewCell {
+                cell.layer.borderWidth = 2.0
+                cell.layer.borderColor = UIColor.instaAccent().cgColor
+        }
     }
     
     //MARK: - Actions
@@ -312,7 +309,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 print(snapshot.status.rawValue)
                 
                 if fractionCompleted == 1.0 && snapshot.status.rawValue == 1 {
-                    self.animateSuccessLabel(completion: { 
+                    self.animateSuccessLabel(completion: {
                         self.completedUpload(image: currentCell.imageView.image!)
                     })
                 }
@@ -328,7 +325,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         switch uploadType {
         case .category:
             print("completed category upload")
-            // needs to switch screen to that category's photo feed
+        // needs to switch screen to that category's photo feed
         case .profile:
             if let profileVC = navigationController?.viewControllers[1] as? ProfileViewController {
                 profileVC.profileImageView.image = image
@@ -364,7 +361,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         return view
     }()
     
-
+    
     lazy var profilePicBanner: UILabel = {
         let view = UILabel()
         view.backgroundColor = UIColor.instaPrimaryDark()

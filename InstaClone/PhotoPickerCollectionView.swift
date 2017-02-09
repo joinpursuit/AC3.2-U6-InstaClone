@@ -55,8 +55,8 @@ class PhotoPickerCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = UIColor.instaPrimary()
         self.contentView.addSubview(imageView)
+        self.backgroundColor = UIColor.instaPrimary()
         configureConstraints()
     }
     override func prepareForReuse() {

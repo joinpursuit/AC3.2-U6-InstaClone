@@ -18,7 +18,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     let storageReference = FIRStorage.storage().reference()
     
     var userImages: [Photo] = []
-    var currentUserID: String?
     
     static let activityFeedCellIdentifyer: String = "activityFeedCell"
     static let myFont = UIFont.systemFont(ofSize: 16)
@@ -68,28 +67,25 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func getUploadedImagePaths() {
         if let currentUserID = FIRAuth.auth()?.currentUser?.uid {
-            self.currentUserID = currentUserID
             databaseUsersReference.child(currentUserID).child("photos").observe(.value, with: { (snapshot) in
                 if let allUserPhotos = snapshot.value as? NSDictionary {
                     let userImageIDs = allUserPhotos.allKeys as! [String]
-                    var userPhotos: [Photo] = []
+                    
                     for photoID in userImageIDs {
+                        
                         guard let category = allUserPhotos[photoID] as? String else { continue }
                         let path = category + "/" + photoID
                         self.databasePhotosReference.child(path).observe(.value, with: { (snapshot) in
-                            if let photoDictionary = snapshot.value as? NSDictionary {
-                                if let photo = Photo(dict: photoDictionary, photoID: photoID) {
-                                    print("photo created")
-                                    userPhotos.append(photo)
+                            if let photoDictionary = snapshot.value as? NSDictionary,
+                                let photo = Photo(dict: photoDictionary, photoID: photoID) {
+                                
+                                self.userImages.append(photo)
+                                
+                                if self.userImages.count == userImageIDs.count {
                                     self.uploadedPhotosCollectionView.reloadData()
-                                    if userPhotos.count == userImageIDs.count {
-                                        self.userImages = userPhotos
-                                        dump(userPhotos)
-                                        self.uploadedPhotosCollectionView.reloadData()
-                                    }
-                                } else {
-                                    print("\(photoID) couldn't be parsed")
                                 }
+                            } else {
+                                print("\(photoID) couldn't be parsed")
                             }
                         })
                     }

@@ -18,7 +18,6 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
         
         setupViewHierarchy()
         configureConstraints()
@@ -38,10 +37,7 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
     }
     
     func setupViewHierarchy(){
-        self.navigationController?.navigationBar.barTintColor = UIColor.instaPrimaryDark()
-        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
-        self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
-        activitiesTableView.register(UITableViewCell.self, forCellReuseIdentifier: "hshsh")
+        activitiesTableView.register(ActivityFeedTableViewCell.self, forCellReuseIdentifier: ProfileViewController.activityFeedCellIdentifyer)
         
         self.view.addSubview(imageView)
         self.view.addSubview(upCountLabel)
@@ -117,10 +113,11 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "hshsh", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: ProfileViewController.activityFeedCellIdentifyer, for: indexPath) as! ActivityFeedTableViewCell
         
-        cell.textLabel?.text = "👍🏻👍🏼👍🏽👍🏾👍🏿"
-        
+        cell.profileImageView.image = #imageLiteral(resourceName: "user_icon")
+        cell.activityTextLabel.text = "👍🏻👍🏼👍🏽👍🏾👍🏿"
+        cell.activityDateLabel.text = "11:30PM"
         return cell
     }
     
@@ -128,7 +125,7 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
     lazy var imageView: UIImageView = {
         let view = UIImageView()
         view.contentMode = .scaleAspectFill
-        view.backgroundColor = .red
+        view.clipsToBounds = true
         return view
     }()
     

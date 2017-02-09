@@ -23,9 +23,18 @@ class MainCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        categoryLabel.layer.borderWidth = 2.0
+        categoryLabel.snp.remakeConstraints { (view) in
+            view.width.equalToSuperview().multipliedBy(0.6)
+            view.height.equalToSuperview().multipliedBy(0.2)
+            view.center.equalToSuperview()
+        }
+    }
+    
     func setupViewHierarchy(){
         self.addSubview(BGImageView)
-        BGImageView.addSubview(coverView)
+        BGImageView.addSubview(filterView)
         self.addSubview(categoryLabel)
     }
     
@@ -34,7 +43,7 @@ class MainCollectionViewCell: UICollectionViewCell {
             view.top.bottom.leading.trailing.equalToSuperview()
         }
         
-        coverView.snp.makeConstraints { (view) in
+        filterView.snp.makeConstraints { (view) in
             view.top.bottom.leading.trailing.equalToSuperview()
         }
         
@@ -63,7 +72,7 @@ class MainCollectionViewCell: UICollectionViewCell {
         return image
     }()
     
-    lazy var coverView: UIView = {
+    lazy var filterView: UIView = {
         let view = UIView()
         view.backgroundColor = .gray
         view.alpha = 0.3

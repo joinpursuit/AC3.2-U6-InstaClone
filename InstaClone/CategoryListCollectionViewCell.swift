@@ -36,6 +36,7 @@ class CategoryListCollectionViewCell: UICollectionViewCell {
     
     func setupViewHierarchy(){
         self.addSubview(BGImageView)
+        self.BGImageView.addSubview(filterView)
         self.addSubview(upVoteImage)
         self.addSubview(downVoteImage)
         self.addSubview(upVoteLabel)
@@ -49,6 +50,10 @@ class CategoryListCollectionViewCell: UICollectionViewCell {
             BGImageView.snp.makeConstraints { (view) in
                 view.top.bottom.leading.trailing.equalToSuperview()
             }
+            
+            filterView.snp.makeConstraints({ (view) in
+                view.top.bottom.leading.trailing.equalToSuperview()
+            })
         }
         if let index = indexxx{
             if (index.row+1)%2 == 1{
@@ -141,4 +146,10 @@ class CategoryListCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
+    lazy var filterView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray
+        view.alpha = 0.2
+        return view
+    }()
 }

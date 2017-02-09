@@ -65,8 +65,8 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let photoDetail = PhotoDetailViewController()
-        //pass the title of photo to detail view
         photoDetail.navigationItem.title = "selected photo name"
+        photoDetail.imageView.image = #imageLiteral(resourceName: "sabro1")
         navigationController?.pushViewController(photoDetail, animated: true)
     }
     

@@ -56,7 +56,7 @@ class Photo {
         dateStringFormatter.dateFormat = "HH:mm:ss"
         let timeString = dateStringFormatter.string(from: date)
         
-        let databasePhotoReference = FIRDatabase.database().reference().child("photos")
+        let databasePhotoReference = FIRDatabase.database().reference().child("photos").child(category)
         let databaseUserReference = FIRDatabase.database().reference().child("users")
         
         // creating object in Photos node
@@ -75,36 +75,34 @@ class Photo {
             "category" : uploadedPhoto.category as AnyObject
         ]
         
-        photoRef.setValue(photoDetails)
-        
-        let voteRef = photoRef.child("votes")
-        let initalVoteCount : [String : AnyObject] = [
-            "upvotes" : uploadedPhoto.upCount as AnyObject,
-            "downvotes" : uploadedPhoto.downCount as AnyObject
-        ]
-        voteRef.updateChildValues(initalVoteCount)
-        
-        // adding the photo ID to user's photo bucket
-        let userPhotoDirectory = databaseUserReference.child(FIRAuth.auth()!.currentUser!.uid).child("photos")
-        let directoryAsURL = URL(string: photoRef.description())!
-        let userPhotoDetail : [String : AnyObject ] = [
-            directoryAsURL.lastPathComponent : "\(uploadedPhoto.date)-\(uploadedPhoto.time)" as AnyObject
-        ]
-        
-        userPhotoDirectory.updateChildValues(userPhotoDetail)
-        
-        
-        // if this is a category pic, add photo ID to users photos
-        // else if a profile pic, add photo ID to user profile pic
         
         switch uploadType {
         case .category:
-            print("Nothing to do here")
+            
+            photoRef.setValue(photoDetails)
+            let voteRef = photoRef.child("votes")
+            let initalVoteCount : [String : AnyObject] = [
+                "upvotes" : uploadedPhoto.upCount as AnyObject,
+                "downvotes" : uploadedPhoto.downCount as AnyObject
+            ]
+            voteRef.updateChildValues(initalVoteCount)
+            
+            // adding the photo ID to user's photo bucket
+            let userPhotoDirectory = databaseUserReference.child(FIRAuth.auth()!.currentUser!.uid).child("photos")
+            let directoryAsURL = URL(string: photoRef.description())!
+            let userPhotoDetail : [String : AnyObject ] = [
+                directoryAsURL.lastPathComponent : category as AnyObject
+            ]
+            userPhotoDirectory.updateChildValues(userPhotoDetail)
+            
         case .profile:
+            
             let databaseReference = FIRDatabase.database().reference().child("users").child(FIRAuth.auth()!.currentUser!.uid)
             let profilePicRef = databaseReference.child("profilePic")
-            profilePicRef.setValue(uploadedPhoto.photoID)
+            profilePicRef.setValue(photoDetails)
+            
         }
+               
     }
     
     static func uploadSuccess(_ metadata: FIRStorageMetadata, storagePath: String) {

@@ -17,7 +17,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     let storageReference = FIRStorage.storage().reference()
     
-    var profilePicFilePath = ""
     var userImages: [Photo] = []
     var currentUserID: String?
     
@@ -33,11 +32,11 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         setConstraints()
         setNavigationBar()
         getCurrentUser()
-        getUploadedImagePaths()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         self.userImages = []
+        getUploadedImagePaths()
     }
     
     override func viewDidLayoutSubviews() {
@@ -51,26 +50,15 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         _ = databaseUsersReference.child(userID).observe(.value, with: { (snapshot) in
             if let userDict = snapshot.value as? NSDictionary {
                 self.navigationItem.title = userDict["username"] as? String
-                if let profilePicID = userDict["profilePic"] as? String {
-                    print("profile pic id: \(profilePicID)")
-                    
-                    let photoRef = self.databasePhotosReference.child(profilePicID)
-                    photoRef.observe(.value, with: { (snapshot2) in
-                        if let photoDict = snapshot2.value as? NSDictionary {
-                            if let filePath = photoDict["filePath"] as? String {
-                                self.profilePicFilePath = filePath
-                                print(filePath)
-                                let imageRef = self.storageReference.child(filePath)
-                                
-                                imageRef.data(withMaxSize: 10 * 1024 * 1024, completion: { (data: Data?, error: Error?) in
-                                    if error != nil {
-                                        print("Error \(error)")
-                                    }
-                                    if let validData = data {
-                                        self.profileImageView.image = UIImage(data: validData)
-                                    }
-                                })
-                            }
+                if let profilePicDict = userDict["profilePic"] as? NSDictionary,
+                    let profilePicFilePath = profilePicDict["filePath"] as? String {
+                    let imageRef = self.storageReference.child(profilePicFilePath)
+                    imageRef.data(withMaxSize: 10 * 1024 * 1024, completion: { (data: Data?, error: Error?) in
+                        if error != nil {
+                            print("Error \(error)")
+                        }
+                        if let validData = data {
+                            self.profileImageView.image = UIImage(data: validData)
                         }
                     })
                 }
@@ -86,7 +74,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                     let userImageIDs = allUserPhotos.allKeys as! [String]
                     var userPhotos: [Photo] = []
                     for photoID in userImageIDs {
-                        self.databasePhotosReference.child(photoID).observe(.value, with: { (snapshot) in
+                        guard let category = allUserPhotos[photoID] as? String else { continue }
+                        let path = category + "/" + photoID
+                        self.databasePhotosReference.child(path).observe(.value, with: { (snapshot) in
                             if let photoDictionary = snapshot.value as? NSDictionary {
                                 if let photo = Photo(dict: photoDictionary, photoID: photoID) {
                                     print("photo created")
@@ -130,7 +120,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     func setConstraints() {
         profileImageView.snp.makeConstraints { (view) in
             view.top.centerX.leading.trailing.equalToSuperview()
-            view.height.equalTo(self.view.bounds.height * 0.25)
+            view.height.equalTo(self.view.bounds.height * 0.30)
         }
         
         feedTableView.snp.makeConstraints { (view) in
@@ -227,7 +217,8 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         let tintedImage = origImage?.withRenderingMode(.alwaysTemplate)
         view.image = tintedImage
         view.tintColor = UIColor.instaAccent()
-        view.contentMode = .scaleAspectFit
+        view.contentMode = .scaleAspectFill
+        view.clipsToBounds = true
         
         let tapGestureRecognizer = UITapGestureRecognizer(target:self, action:#selector(profileImageTapped))
         view.isUserInteractionEnabled = true

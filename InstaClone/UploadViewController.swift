@@ -36,10 +36,11 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         view.backgroundColor = UIColor.instaPrimaryLight()
         super.viewDidLoad()
         self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
-        setUpIdentifiersAndCells()
+        view.backgroundColor = UIColor.instaPrimary()
+        
+        setUpIdentifiers()
         setUpViewHierarchyAndDelegates()
         configureConstraints()
-        view.backgroundColor = UIColor.instaPrimary()
         setUpPhotoFetcher()
         setUpNavigationItems()
     }
@@ -186,12 +187,9 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         }
     }
     
-    func setUpIdentifiersAndCells() {
+    func setUpIdentifiers() {
         self.smallPhotoCollectionView.accessibilityIdentifier = ViewIdentifier.smallPhoto.rawValue
-        self.smallPhotoCollectionView.registerPhotoCell()
-        
         self.largePhotoCollectionView.accessibilityIdentifier = ViewIdentifier.largePhoto.rawValue
-        self.largePhotoCollectionView.registerPhotoCell()
     }
     
     
@@ -285,7 +283,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 }
             }
             uploadTask.observe(.progress, handler: { (snapshot) in
-                var fractionCompleted = Float(snapshot.progress!.fractionCompleted)
+                let fractionCompleted = Float(snapshot.progress!.fractionCompleted)
                 self.downloadProgressBar.setProgress(fractionCompleted, animated: true)
                 print(snapshot.status.rawValue)
                 

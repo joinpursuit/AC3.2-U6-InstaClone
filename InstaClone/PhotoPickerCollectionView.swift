@@ -25,9 +25,10 @@ class PickerCollectionView: UICollectionView  {
         
         self.layout = horizontalLayout
         self.showsVerticalScrollIndicator = false
+        registerPhotoCell()
     }
     
-    func registerPhotoCell() {
+    private func registerPhotoCell() {
         self.register(PhotoPickerCollectionViewCell.self, forCellWithReuseIdentifier: PhotoPickerCollectionViewCell.cellID)
     }
     

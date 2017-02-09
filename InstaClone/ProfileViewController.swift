@@ -15,7 +15,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     let databaseUsersReference = FIRDatabase.database().reference().child("users")
     let databasePhotosReference = FIRDatabase.database().reference().child("photos")
 
-    let storageReference = FIRStorage.storage()
+    let storageReference = FIRStorage.storage().reference()
     
     var profilePicFilePath = ""
     
@@ -30,8 +30,8 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         setUpViewHeirachy()
         setConstraints()
         setNavigationBar()
-        
         getCurrentUser()
+        getUploadedImages()
     }
     
 
@@ -39,8 +39,8 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     // MARK: SET UP
     
     func getCurrentUser() {
-        let userID = FIRAuth.auth()?.currentUser?.uid
-        _ = databaseUsersReference.child(userID!).observe(.value, with: { (snapshot) in
+        guard let userID = FIRAuth.auth()?.currentUser?.uid else { return }
+        _ = databaseUsersReference.child(userID).observe(.value, with: { (snapshot) in
             if let userDict = snapshot.value as? NSDictionary {
                 self.navigationItem.title = userDict["username"] as? String
                 if let profilePicID = userDict["profilePic"] as? String {
@@ -52,7 +52,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                             if let filePath = photoDict["filePath"] as? String {
                                 self.profilePicFilePath = filePath
                                 
-                                let imageRef = self.storageReference.reference().child(filePath)
+                                let imageRef = self.storageReference.child(filePath)
                                 
                                 imageRef.data(withMaxSize: 1 * 1024 * 1024, completion: { (data: Data?, error: Error?) in
                                     if error != nil {
@@ -70,6 +70,20 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         })
     }
     
+    func getUploadedImages() {
+        if let currentUserID = FIRAuth.auth()?.currentUser?.uid {
+            self.storageReference.child(currentUserID).data(withMaxSize: 1 * 1024 * 1024, completion: { (data, error) in
+                if error != nil {
+                    print(error!.localizedDescription)
+                    return
+                }
+                if let validData = data {
+                    dump(data!)
+                }
+            })
+        }
+    }
+    
     func setNavigationBar() {
         self.navigationItem.hidesBackButton = true
         let logoutButton = UIBarButtonItem(title: "LOGOUT", style: UIBarButtonItemStyle.plain, target: self, action: #selector(logoutTapped))
@@ -84,6 +98,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.view.addSubview(feedTableView)
         self.view.addSubview(profileImageView)
         self.view.addSubview(uploadedPhotosCollectionView)
+        
+        uploadedPhotosCollectionView.dataSource = self
+        uploadedPhotosCollectionView.delegate = self
     }
     
     func setConstraints() {

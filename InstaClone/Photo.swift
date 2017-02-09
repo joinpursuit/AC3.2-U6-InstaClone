@@ -46,17 +46,6 @@ class Photo {
             let downCount = votesDict["downvotes"] as? Int else { return nil }
         
         self.init(photoID: photoID, uploadedBy: uploadedBy, title: title, category: category, filePath: filePath, date: date, time: time, upCount: upCount, downCount: downCount)
-        /*
-         
-         category:
-         date:
-         filePath:
-         time:
-         uploadedBy:
-         votes
-         downvotes: 
-         upvotes:
-         */
     }
     
     static func createPhotoInDatabase(for title: String, category: String, imagePath: String, uploadType: UploadType) {

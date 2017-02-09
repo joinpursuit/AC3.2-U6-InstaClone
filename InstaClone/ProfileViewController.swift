@@ -33,10 +33,12 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         setConstraints()
         setNavigationBar()
         getCurrentUser()
-        //getUploadedImagePaths()
+        getUploadedImagePaths()
     }
     
-    
+    override func viewDidAppear(_ animated: Bool) {
+        self.userImages = []
+    }
     
     // MARK: SET UP
     
@@ -71,17 +73,24 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             }
         })
     }
-    /*
+    
     func getUploadedImagePaths() {
         if let currentUserID = FIRAuth.auth()?.currentUser?.uid {
             self.currentUserID = currentUserID
             databaseUsersReference.child(currentUserID).child("photos").observe(.value, with: { (snapshot) in
                 if let allUserPhotos = snapshot.value as? NSDictionary {
-                    let userImagePaths = allUserPhotos.allKeys as! [String]
-                    for path in userImagePaths {
-                        self.databasePhotosReference.child(imageKey).observe(.value, with: { (snapshot) in
+                    let userImageIDs = allUserPhotos.allKeys as! [String]
+                    var userPhotos: [Photo] = []
+                    for photoID in userImageIDs {
+                        self.databasePhotosReference.child(photoID).observe(.value, with: { (snapshot) in
                             if let photoDictionary = snapshot.value as? NSDictionary {
-                                let photo = Photo
+                                if let photo = Photo(dict: photoDictionary, photoID: photoID) {
+                                    print("photo created")
+                                    self.userImages.append(photo)
+                                    self.uploadedPhotosCollectionView.reloadData()
+                                } else {
+                                    print("\(photoID) couldn't be parsed")
+                                }
                             }
                         })
                     }
@@ -89,7 +98,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             })
         }
     }
-    */
+    
     func setNavigationBar() {
         self.navigationItem.hidesBackButton = true
         let logoutButton = UIBarButtonItem(title: "LOGOUT", style: UIBarButtonItemStyle.plain, target: self, action: #selector(logoutTapped))
@@ -163,15 +172,17 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let smallPhotoCell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoPickerCollectionViewCell.cellID, for: indexPath) as! PhotoPickerCollectionViewCell
-        //        self.storageReference.child(filePath).data(withMaxSize: 10 * 1024 * 1024) { (data, error) in
-        //            if error != nil {
-        //                print(error?.localizedDescription)
-        //            }
-        //            if let validData = data {
-        //                smallPhotoCell.imageView.image = UIImage(data: validData)
-        //                smallPhotoCell.setNeedsLayout()
-        //            }
-        //        }
+        let currentPhoto = self.userImages[indexPath.row]
+        smallPhotoCell.imageView.contentMode = .scaleAspectFill
+        self.storageReference.child(currentPhoto.filePath).data(withMaxSize: 10 * 1024 * 1024) { (data, error) in
+            if error != nil {
+                print(error?.localizedDescription)
+            }
+            if let validData = data {
+                smallPhotoCell.imageView.image = UIImage(data: validData)
+                smallPhotoCell.setNeedsLayout()
+            }
+        }
         
         return smallPhotoCell
     }

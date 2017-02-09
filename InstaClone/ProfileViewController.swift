@@ -32,11 +32,11 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         setConstraints()
         setNavigationBar()
         getCurrentUser()
-        getUploadedImagePaths()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         self.userImages = []
+        getUploadedImagePaths()
     }
     
     override func viewDidLayoutSubviews() {

@@ -223,11 +223,34 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         }
         return cell
     }
+    /*
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        <#code#>
+    }
     
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        let indexPath = self.largePhotoCollectionView.indexPathsForVisibleItems.first!
+        self.smallPhotoCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
+    }
+    
+    //    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    //        let currrentCell = mainCollectionV.indexPathsForVisibleItems.sorted()
+    //        if currrentCell[0].row == 0{
+    //            topCellIndex = currrentCell[0]
+    //        }else if currrentCell[0] == topCellIndex{
+    //            topCellIndex = currrentCell[1]
+    //        }else{
+    //            topCellIndex = currrentCell[0]
+    //        }
+    //
+    //        self.mainCollectionV.reloadData()
+    //        self.mainCollectionV.scrollToItem(at: topCellIndex!, at: UICollectionViewScrollPosition.top, animated: true)
+    //    }
+    
+     */
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if collectionView.accessibilityIdentifier ?? "" == ViewIdentifier.smallPhoto.rawValue {
-            self.largePhotoCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .left)
-        }
+        self.largePhotoCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .left)
+        self.smallPhotoCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: .centeredHorizontally)
     }
     
     //MARK: - Actions

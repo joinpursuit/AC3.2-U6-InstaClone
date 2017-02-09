@@ -288,7 +288,9 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 print(snapshot.status.rawValue)
                 
                 if fractionCompleted == 1.0 && snapshot.status.rawValue == 1 {
-                    self.animateSuccessLabel()
+                    self.animateSuccessLabel(completion: { 
+                        self.completedUpload(image: currentCell.imageView.image!)
+                    })
                 }
             })
             
@@ -296,6 +298,19 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             self.showOKAlert(title: "Not Logged In", message: "Please log in or register to continue")
         }
         print("I uploaded an image. LOL.")
+    }
+    
+    func completedUpload(image: UIImage) {
+        switch uploadType {
+        case .category:
+            print("completed category upload")
+            // needs to switch screen to that category's photo feed
+        case .profile:
+            if let profileVC = navigationController?.viewControllers[1] as? ProfileViewController {
+                profileVC.profileImageView.image = image
+                _ = navigationController?.popViewController(animated: true)
+            }
+        }
     }
     
     //MARK: - Views
@@ -367,7 +382,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     //MARK: - Animations
     
-    func animateSuccessLabel () {
+    func animateSuccessLabel (completion: @escaping ()->Void) {
         self.progressLabel.text = "¡SUCCESS!"
         _ = progressContainterView.subviews.map {
             if $0 is UIProgressView {
@@ -385,6 +400,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             _ = self.progressContainterView.subviews.map{ $0.removeFromSuperview() }
             self.progressContainterView.removeFromSuperview()
             self.overlayView.removeFromSuperview()
+            completion()
         }
         animator.startAnimation()
     }

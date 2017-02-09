@@ -15,7 +15,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     var topCellIndex: IndexPath?
     var normalSize: CGSize?
     var largeSize: CGSize?
-    static let categories = ["ANIMALS", "BEACH DAY", "FLOWERS & PLANTS", "PEOPLE", "LANDSCAPE", "EVAN", "TRUMP"]
+    static let categories = ["ANIMALS", "PEOPLE", "NATURE", "CITYSCAPE", "LANDSCAPE", "EVAN", "PIGS"]
     let ReuseIdentifierForCell = "MainCell"
     
     override func viewDidLoad() {

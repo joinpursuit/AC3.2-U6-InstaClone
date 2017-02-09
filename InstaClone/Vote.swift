@@ -39,6 +39,7 @@ class Vote {
                 votes["downvotes"] = downvotes
                 
                 currentData.value = data
+                dump(currentData.value)
                 
                 return FIRTransactionResult.success(withValue: currentData)
             }

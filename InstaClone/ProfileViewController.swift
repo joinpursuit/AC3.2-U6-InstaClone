@@ -40,6 +40,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.userImages = []
     }
     
+    override func viewDidLayoutSubviews() {
+        uploadedPhotosCollectionView.setUpItemLayout()
+    }
+    
     // MARK: SET UP
     
     func getCurrentUser() {
@@ -86,8 +90,13 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                             if let photoDictionary = snapshot.value as? NSDictionary {
                                 if let photo = Photo(dict: photoDictionary, photoID: photoID) {
                                     print("photo created")
-                                    self.userImages.append(photo)
+                                    userPhotos.append(photo)
                                     self.uploadedPhotosCollectionView.reloadData()
+                                    if userPhotos.count == userImageIDs.count {
+                                        self.userImages = userPhotos
+                                        dump(userPhotos)
+                                        self.uploadedPhotosCollectionView.reloadData()
+                                    }
                                 } else {
                                     print("\(photoID) couldn't be parsed")
                                 }
@@ -173,10 +182,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let smallPhotoCell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoPickerCollectionViewCell.cellID, for: indexPath) as! PhotoPickerCollectionViewCell
         let currentPhoto = self.userImages[indexPath.row]
-        smallPhotoCell.imageView.contentMode = .scaleAspectFill
         self.storageReference.child(currentPhoto.filePath).data(withMaxSize: 10 * 1024 * 1024) { (data, error) in
             if error != nil {
-                print(error?.localizedDescription)
+                print(error!.localizedDescription)
             }
             if let validData = data {
                 smallPhotoCell.imageView.image = UIImage(data: validData)

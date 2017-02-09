@@ -22,9 +22,12 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
         setupViewHierarchy()
         configureConstraints()
         
-        let filePath = currentPhoto.filePath
-        
-        let imageRef = self.storageReference.child(filePath)
+        loadCurrentImage()
+    }
+    
+    func loadCurrentImage() {
+        navigationItem.title = currentPhoto.title
+        let imageRef = self.storageReference.child(currentPhoto.filePath)
         imageRef.data(withMaxSize: 10 * 1024 * 1024, completion: { (data: Data?, error: Error?) in
             if error != nil {
                 print("Error \(error)")
@@ -33,7 +36,6 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
                 self.imageView.image = UIImage(data: validData)
             }
         })
-
     }
     
     func setupViewHierarchy(){

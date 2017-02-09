@@ -69,8 +69,7 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let photoDetail = PhotoDetailViewController()
-        photoDetail.navigationItem.title = "selected photo name"
-        photoDetail.imageView.image = #imageLiteral(resourceName: "sabro1")
+        photoDetail.currentPhoto = images[indexPath.item]
         navigationController?.pushViewController(photoDetail, animated: true)
     }
     

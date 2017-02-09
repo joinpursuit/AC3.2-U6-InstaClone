@@ -17,6 +17,10 @@ enum ViewIdentifier: String {
     case smallPhoto, largePhoto, overlay
 }
 
+enum UploadType {
+    case category, profile
+}
+
 class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITextFieldDelegate {
     
     let categories = ["ANIMALS", "BEACH DAY", "LANDSCAPE", "CATS", "DOGS", "PIGS", "EVAN"]
@@ -25,6 +29,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     let storageManager = FIRStorage.storage()
     let databaseManager = FIRDatabase.database().reference()
     var currentCategory: String?
+    
+    var uploadType: UploadType = .category
     
     override func viewDidLoad() {
         view.backgroundColor = UIColor.instaPrimaryLight()
@@ -83,11 +89,19 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         let views = [smallPhotoCollectionView, largePhotoCollectionView]
         _ = views.map{ $0.dataSource = self }
         _ = views.map{ $0.delegate = self }
-        self.titleTextField.delegate = self
         _ = views.map{ self.view.addSubview($0) }
-        self.view.addSubview(categoryScrollView)
-        self.view.addSubview(titleTextField)
         largePhotoCollectionView.isPagingEnabled = true
+        
+        switch self.uploadType {
+        case .category:
+            self.view.addSubview(categoryScrollView)
+            self.view.addSubview(titleTextField)
+            self.titleTextField.delegate = self
+            configureCategoryUploadConstraints()
+        case .profile:
+            self.view.addSubview(profilePicBanner)
+            configureProfileUploadConstraints()
+        }
     }
     
     func configureConstraints() {
@@ -96,6 +110,14 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             view.trailing.leading.bottom.equalToSuperview()
         }
         
+        largePhotoCollectionView.snp.makeConstraints { (view) in
+            view.leading.trailing.equalToSuperview()
+            view.width.height.equalTo(self.view.snp.width)
+            view.bottom.equalTo(self.smallPhotoCollectionView.snp.top)
+        }
+    }
+    
+    func configureCategoryUploadConstraints() {
         titleTextField.snp.makeConstraints { (view) in
             view.top.equalToSuperview()
             view.leading.equalToSuperview().offset(6)
@@ -106,12 +128,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         categoryScrollView.snp.makeConstraints { (view) in
             view.leading.trailing.equalToSuperview()
             view.bottom.equalTo(largePhotoCollectionView.snp.top)
-        }
-        
-        largePhotoCollectionView.snp.makeConstraints { (view) in
-            view.leading.trailing.equalToSuperview()
-            view.width.height.equalTo(self.view.snp.width)
-            view.bottom.equalTo(self.smallPhotoCollectionView.snp.top)
         }
         
         for (index, category) in categories.enumerated() {
@@ -140,7 +156,13 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         categoryScrollView.snp.makeConstraints { (view) in
             view.height.equalTo(categoryScrollView.subviews.first!.snp.height).offset(8)
         }
-        
+    }
+    
+    func configureProfileUploadConstraints() {
+        profilePicBanner.snp.makeConstraints { (view) in
+            view.top.left.right.equalToSuperview()
+            view.bottom.equalTo(largePhotoCollectionView.snp.top)
+        }
     }
     
     func setUpIdentifiersAndCells() {
@@ -205,17 +227,30 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     func didPressUploadButton() {
         
-        guard let title = self.titleTextField.text,
-            let category = self.currentCategory else {
-                self.showOKAlert(title: "Missing Title or Category", message: "Please make sure title and category are filled out")
-                return
+        var category = ""
+        var title = ""
+        switch self.uploadType {
+        case .category:
+            guard let titleText = self.titleTextField.text,
+                let categoryText = self.currentCategory else {
+                    self.showOKAlert(title: "Missing Title or Category", message: "Please make sure title and category are filled out")
+                    return
+            }
+            title = titleText
+            category = categoryText
+        case .profile:
+            guard let titleText = FIRAuth.auth()?.currentUser?.email else { return }
+            let categoryText = "PROFILE PIC"
+            title = titleText
+            category = categoryText
         }
+        
         if let currentUser = FIRAuth.auth()?.currentUser {
             let currentCell = largePhotoCollectionView.visibleCells.first! as! PhotoPickerCollectionViewCell
             let data = UIImageJPEGRepresentation(currentCell.imageView.image!, 0.8)!
             let metaData = FIRStorageMetadata()
             metaData.contentType = "image/jpg"
-            let storageReference = self.storageManager.reference(forURL: "gs://fir-testapp-989e7.appspot.com")
+            let storageReference = self.storageManager.reference()
             let imagePath = currentUser.uid + "/\(Int(Date.timeIntervalSinceReferenceDate * 1000)).jpg"
             
             let uploadTask = storageReference.child(imagePath).put(data, metadata: metaData){(metaData,error) in
@@ -223,7 +258,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                     print(error.localizedDescription)
                     return
                 } else {
-                    Photo.createPhotoInDatabase(for: title, category: category, imagePath: imagePath)
+                    Photo.createPhotoInDatabase(for: title, category: category, imagePath: imagePath, uploadType: self.uploadType)
                 }
             }
             uploadTask.observe(.progress, handler: { (snapshot) in
@@ -260,6 +295,16 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         view.attributedPlaceholder = NSAttributedString(string: " TITLE", attributes: [NSForegroundColorAttributeName: UIColor.instaAccent(), NSFontAttributeName: UIFont.systemFont(ofSize: 24)])
         view.font = UIFont.systemFont(ofSize: 24)
         view.textColor = UIColor.instaAccent()
+        return view
+    }()
+    
+    lazy var profilePicBanner: UILabel = {
+        let view = UILabel()
+        view.backgroundColor = UIColor.instaPrimaryDark()
+        view.textColor = UIColor.instaAccent()
+        view.text = "CHOOSE YOUR NEW PROFILE PICTURE"
+        view.font = UIFont.systemFont(ofSize: 16)
+        view.textAlignment = .center
         return view
     }()
     

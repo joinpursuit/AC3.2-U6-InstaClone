@@ -15,14 +15,14 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     var topCellIndex: IndexPath?
     var normalSize: CGSize?
     var largeSize: CGSize?
-    let categories = ["ANIMALS", "BEACH DAY", "LANDSCAPE", "CATS", "DOGS", "PIGS", "SPORTS", "MACRO", "PORTRAIT", "TRUMP"]
+    static let categories = ["ANIMALS", "BEACH DAY", "FLOWERS & PLANTS", "PEOPLE", "LANDSCAPE", "EVAN", "TRUMP"]
     let ReuseIdentifierForCell = "MainCell"
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = UIColor.instaPrimary()
         self.normalSize = CGSize(width: self.view.frame.width, height: self.view.frame.width/2.5)
-        self.largeSize = CGSize(width: self.view.frame.width, height: self.view.frame.width/1.8)
+        self.largeSize = CGSize(width: self.view.frame.width, height: self.view.frame.width/1.7)
 
         setupViewHierarchy()
         configureConstraints()
@@ -49,69 +49,64 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     
     //MARK: - Collection View Delegate
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.categories.count
+        return MainViewController.categories.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifierForCell, for: indexPath) as! MainCollectionViewCell
+
+        cell.BGImageView.image = #imageLiteral(resourceName: "sample")
+        cell.BGImageView.animationImages = [#imageLiteral(resourceName: "sample"), #imageLiteral(resourceName: "sample2")]
+        cell.BGImageView.animationDuration = Double(arc4random_uniform(7) + 3)
+        cell.BGImageView.animationRepeatCount = 0
+        cell.BGImageView.startAnimating()
         
-        let imageView = UIImageView(frame: CGRect(x: 10, y: 10, width: cell.frame.width - 10, height: cell.frame.width - 10))
-//        let some = UIImage(named: "sample")
-//        let another = some?.cgImage
-//        let tempImage = CIImage(cgImage: another!)
-//        let brightnessFilter = CIFilter(name: "CIColorControls")!
-//        brightnessFilter.setValue(0.8, forKey: "inputImage")
-//        let newImage = UIImage(cgImage: CIContext(options: nil).createCGImage(tempImage, from: (brightnessFilter.outputImage?.extent)!)!)
-        imageView.contentMode = .scaleToFill
-        imageView.animationImages = [#imageLiteral(resourceName: "sample"), #imageLiteral(resourceName: "sample2")]
-        imageView.animationDuration = Double(arc4random_uniform(7
-            ) + 3)
-        imageView.animationRepeatCount = 0
-        imageView.startAnimating()
-        cell.backgroundView = imageView
-        //testing data
-        cell.categoryLabel.text = categories[indexPath.row]
+        cell.categoryLabel.text = MainViewController.categories[indexPath.row]
         
-        //need image and categories names
-        //background imge capacity need to increase 10%
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let categoryView = CategoryListViewController()
-        categoryView.navigationItem.title = categories[indexPath.row]
+        categoryView.navigationItem.title = MainViewController.categories[indexPath.row]
         self.navigationController?.pushViewController(categoryView, animated: true)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if let current = self.topCellIndex{
-            if indexPath == current{
-                self.animator.addAnimations({
-                })
-                return largeSize!
-            }
-        }else{
-            if indexPath.row == 0{
-                return largeSize!
-            }
-        }
-        return normalSize!
-    }
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        if let current = self.topCellIndex{
+//            if indexPath == current{
+//                self.animator.addAnimations({
+//                })
+//                return largeSize!
+//            }
+//        }else{
+//            if indexPath.row == 0{
+//                return largeSize!
+//            }
+//        }
+//        return normalSize!
+//    }
     
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        let currrentIndex = mainCollectionV.indexPathsForVisibleItems.sorted()[0]
-        self.topCellIndex = currrentIndex
-        print(currrentIndex.row)
-        self.mainCollectionV.reloadData()
-        self.mainCollectionV.scrollToItem(at: currrentIndex, at: UICollectionViewScrollPosition.top, animated: true)
-    }
+//    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+//        let currrentCell = mainCollectionV.indexPathsForVisibleItems.sorted()
+//        if currrentCell[0].row == 0{
+//            topCellIndex = currrentCell[0]
+//        }else if currrentCell[0] == topCellIndex{
+//            topCellIndex = currrentCell[1]
+//        }else{
+//            topCellIndex = currrentCell[0]
+//        }
+//        
+//        self.mainCollectionV.reloadData()
+//        self.mainCollectionV.scrollToItem(at: topCellIndex!, at: UICollectionViewScrollPosition.top, animated: true)
+//    }
     
     //Mark: - Lazy Inits
     lazy var mainCollectionV: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        layout.itemSize = self.normalSize!
+        layout.itemSize = self.largeSize!
         
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0

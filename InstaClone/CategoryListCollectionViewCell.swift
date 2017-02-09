@@ -31,9 +31,11 @@ class CategoryListCollectionViewCell: UICollectionViewCell {
         downVoteImage.snp.removeConstraints()
         upVoteLabel.snp.removeConstraints()
         downVoteLabel.snp.removeConstraints()
+        BGImageView.image = nil
     }
     
     func setupViewHierarchy(){
+        self.addSubview(BGImageView)
         self.addSubview(upVoteImage)
         self.addSubview(downVoteImage)
         self.addSubview(upVoteLabel)
@@ -43,6 +45,11 @@ class CategoryListCollectionViewCell: UICollectionViewCell {
     }
     
     func configureConstraints(){
+        if BGImageView.snp.size != self.snp.size{
+            BGImageView.snp.makeConstraints { (view) in
+                view.top.bottom.leading.trailing.equalToSuperview()
+            }
+        }
         if let index = indexxx{
             if (index.row+1)%2 == 1{
                 downVoteImage.snp.makeConstraints({ (view) in
@@ -95,6 +102,13 @@ class CategoryListCollectionViewCell: UICollectionViewCell {
     }
     
     //Mark: - Lazy Inits
+    lazy var BGImageView: UIImageView = {
+        let image = UIImageView()
+        image.clipsToBounds = true
+        image.contentMode = .scaleAspectFill
+        return image
+    }()
+    
     lazy var upVoteImage: UIImageView = {
         let image = UIImageView()
         image.image = UIImage(named: "up_arrow")

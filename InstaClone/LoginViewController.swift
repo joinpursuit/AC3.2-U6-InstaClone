@@ -96,26 +96,32 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     func didTapRegisterButton() {
         print("register")
-        if let username = usernameTextField.text, let password = passwordTextField.text {
-            FIRAuth.auth()?.createUser(withEmail: username, password: password, completion: { (user: FIRUser?, error: Error?) in
+        if let email = usernameTextField.text, let password = passwordTextField.text {
+            
+            FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
                 if error != nil {
-                    print("error with completion: \(error!)")
+                    print("error with completion while creating new Authentication: \(error!)")
                 }
                 if user != nil {
                     // create a new user with the UID
                     // on completion, segue to profile screen
-                    let newUserRef = self.databaseReference.child(user!.uid)
-                    let newUserDetails: [String: AnyObject] = [
-                        "username" : username as AnyObject,
-                        "password" : password as AnyObject
-                    ]
-                    newUserRef.setValue(newUserDetails)
-                    newUserRef.setValue(newUserDetails, withCompletionBlock: { (error: Error?, reference: FIRDatabaseReference?) in
-                        if error != nil {
-                            print("Error creating new user: \(error)")
-                        }
+                    
+//                    let newUserRef = self.databaseReference.child(user!.uid)
+//                    let newUserDetails: [String: AnyObject] = [
+//                        "username" : email as AnyObject,
+//                        "password" : password as AnyObject
+//                    ]
+                    
+                    User.createUserInDatabase(email: email, completion: { 
                         self.goToProfileView(animated: true)
                     })
+                    
+//                    newUserRef.setValue(newUserDetails, withCompletionBlock: { (error: Error?, reference: FIRDatabaseReference?) in
+//                        if error != nil {
+//                            print("Error creating new user: \(error)")
+//                        }
+//                        self.goToProfileView(animated: true)
+//                    })
                 } else {
                     self.showOKAlert(title: "Error", message: error?.localizedDescription)
                 }
@@ -154,7 +160,6 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         self.usernameTextField.text = nil
         self.passwordTextField.text = nil
         let profileView = ProfileViewController()
-//        self.navigationController?.viewControllers = [profileView]
         self.navigationController?.pushViewController(profileView, animated: animated)
     }
     

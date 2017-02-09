@@ -23,7 +23,7 @@ class User {
         self.uploaded = uploaded
     }
     
-    static func createUserInDatabase(email: String) {
+    static func createUserInDatabase(email: String, completion: @escaping (() -> Void)) {
         
         let newUser = User(email: email, profileImage: nil, votes: [:], uploaded: [])
         
@@ -32,11 +32,18 @@ class User {
         let newUserRef = databaseUserReference.child("\(FIRAuth.auth()!.currentUser!.uid)")
         
         let newUserDetails: [String : AnyObject] = [
-            "name" : newUser.email as AnyObject,
-            //            "profile" : newUser.profileImage as AnyObject,
+            "username" : newUser.email as AnyObject,
             "votes" : newUser.votes as AnyObject
         ]
         
-        newUserRef.setValue(newUserDetails)
+        newUserRef.setValue(newUserDetails) { (error, reference) in
+            if error != nil {
+                print("Error creating new user: \(error)")
+            }
+            completion()
+        }
     }
+    
+    
+    
 }

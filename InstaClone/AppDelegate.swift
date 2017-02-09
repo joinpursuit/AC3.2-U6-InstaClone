@@ -32,7 +32,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let navigationBarAppearace = UINavigationBar.appearance()
         navigationBarAppearace.backgroundColor = UIColor.instaPrimaryLight()
         navigationBarAppearace.barTintColor = UIColor.instaPrimaryDark()
-        navigationBarAppearace.titleTextAttributes = [NSForegroundColorAttributeName : UIColor.white]
+        navigationBarAppearace.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white,
+                                                      NSFontAttributeName: UIFont.systemFont(ofSize: 18, weight: UIFontWeightLight)]
         UIApplication.shared.statusBarStyle = .lightContent
     }
     

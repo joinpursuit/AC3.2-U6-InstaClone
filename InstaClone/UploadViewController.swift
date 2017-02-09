@@ -252,6 +252,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         switch self.uploadType {
         case .category:
             guard let titleText = self.titleTextField.text,
+                !titleText.isEmpty,
                 let categoryText = self.currentCategory else {
                     self.showOKAlert(title: "Missing Title or Category", message: "Please make sure title and category are filled out")
                     return

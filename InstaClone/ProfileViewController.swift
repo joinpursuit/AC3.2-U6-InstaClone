@@ -74,7 +74,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                     let userImageIDs = allUserPhotos.allKeys as! [String]
                     var userPhotos: [Photo] = []
                     for photoID in userImageIDs {
-                        self.databasePhotosReference.child(photoID).observe(.value, with: { (snapshot) in
+                        guard let category = allUserPhotos[photoID] as? String else { continue }
+                        let path = category + "/" + photoID
+                        self.databasePhotosReference.child(path).observe(.value, with: { (snapshot) in
                             if let photoDictionary = snapshot.value as? NSDictionary {
                                 if let photo = Photo(dict: photoDictionary, photoID: photoID) {
                                     print("photo created")

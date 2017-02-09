@@ -185,6 +185,12 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         return smallPhotoCell
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let photoDetailVC = PhotoDetailViewController()
+        photoDetailVC.currentPhoto = userImages[indexPath.item]
+        _ = navigationController?.pushViewController(photoDetailVC, animated: true)
+    }
+    
     // MARK: - TARGET ACTION METHODS
     
     func logoutTapped() {

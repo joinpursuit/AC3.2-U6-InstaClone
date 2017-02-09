@@ -76,13 +76,34 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     func setUpOverlay () {
-        let overlayView = UIView()
-        overlayView.backgroundColor = UIColor.black.withAlphaComponent(0.4)
-        overlayView.accessibilityIdentifier = ViewIdentifier.overlay.rawValue
         self.view.addSubview(overlayView)
         overlayView.snp.makeConstraints({ (view) in
             view.top.trailing.bottom.leading.equalToSuperview()
         })
+        self.overlayView.addSubview(progressContainterView)
+        self.progressContainterView.addSubview(progressLabel)
+        self.progressContainterView.addSubview(downloadProgressBar)
+        
+        downloadProgressBar.progress = 0.0
+        progressLabel.text = "UPLOADING..."
+        
+        progressContainterView.snp.makeConstraints { (view) in
+            view.centerX.centerY.equalToSuperview()
+            view.width.equalToSuperview().dividedBy(1.5)
+            view.height.equalTo(overlayView.snp.width).dividedBy(6)
+        }
+        
+        progressLabel.snp.makeConstraints { (view) in
+            view.bottom.equalTo(progressContainterView.snp.centerY)
+            view.centerX.equalToSuperview()
+        }
+        
+        downloadProgressBar.snp.makeConstraints { (view) in
+            view.centerX.equalToSuperview()
+            view.centerY.equalToSuperview().multipliedBy(1.5)
+            view.trailing.equalToSuperview().inset(16)
+            view.leading.equalToSuperview().offset(16)
+        }
     }
     
     func setUpViewHierarchyAndDelegates() {
@@ -173,6 +194,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         self.largePhotoCollectionView.registerPhotoCell()
     }
     
+    
     //MARK: - CollectionView Delegate Methods
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -253,6 +275,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
             let storageReference = self.storageManager.reference()
             let imagePath = currentUser.uid + "/\(Int(Date.timeIntervalSinceReferenceDate * 1000)).jpg"
             
+            self.setUpOverlay()
             let uploadTask = storageReference.child(imagePath).put(data, metadata: metaData){(metaData,error) in
                 if let error = error {
                     print(error.localizedDescription)
@@ -262,9 +285,15 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
                 }
             }
             uploadTask.observe(.progress, handler: { (snapshot) in
-                //To Do add in progressoverlay
-                print(snapshot.progress?.fractionCompleted)
+                var fractionCompleted = Float(snapshot.progress!.fractionCompleted)
+                self.downloadProgressBar.setProgress(fractionCompleted, animated: true)
+                print(snapshot.status.rawValue)
+                
+                if fractionCompleted == 1.0 && snapshot.status.rawValue == 1 {
+                    self.animateSuccessLabel()
+                }
             })
+            
         } else {
             self.showOKAlert(title: "Not Logged In", message: "Please log in or register to continue")
         }
@@ -298,6 +327,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         return view
     }()
     
+
     lazy var profilePicBanner: UILabel = {
         let view = UILabel()
         view.backgroundColor = UIColor.instaPrimaryDark()
@@ -308,10 +338,65 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         return view
     }()
     
+    //MARK: - Overlay View and Subview
+    let overlayView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.4)
+        view.accessibilityIdentifier = ViewIdentifier.overlay.rawValue
+        return view
+    }()
+    
+    let progressContainterView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.instaPrimaryDark()
+        view.layer.cornerRadius = 16
+        return view
+    }()
+    
+    let progressLabel: UILabel = {
+        let view = UILabel()
+        view.textColor = UIColor.instaAccent()
+        view.textAlignment = .center
+        view.font = UIFont.systemFont(ofSize: 18)
+        return view
+    }()
+    
+    let downloadProgressBar: UIProgressView = {
+        let view = UIProgressView()
+        view.progressTintColor = UIColor.instaAccent()
+        return view
+    }()
+    
+    //MARK: - Animations
+    
+    func animateSuccessLabel () {
+        self.progressLabel.text = "¡SUCCESS!"
+        _ = progressContainterView.subviews.map {
+            if $0 is UIProgressView {
+                $0.removeFromSuperview()
+            }
+        }
+        
+        let animator = UIViewPropertyAnimator(duration: 0.75, curve: .easeOut, animations: {
+            self.progressLabel.snp.remakeConstraints({ (view) in
+                view.centerY.centerX.equalToSuperview()
+            })
+            self.view.layoutIfNeeded()
+        })
+        animator.addCompletion { _ in
+            _ = self.progressContainterView.subviews.map{ $0.removeFromSuperview() }
+            self.progressContainterView.removeFromSuperview()
+            self.overlayView.removeFromSuperview()
+        }
+        animator.startAnimation()
+    }
+    
+    //MARK: - Helper Functions
     func showOKAlert(title: String, message: String?, completion: (() -> Void)? = nil) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let ok = UIAlertAction(title: "OK", style: .cancel, handler: nil)
         alert.addAction(ok)
         self.present(alert, animated: true, completion: completion)
     }
+    
 }

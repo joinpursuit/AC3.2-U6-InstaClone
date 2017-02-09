@@ -52,9 +52,11 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
         
         if indexPath.row%3 == 2{
             cell.backgroundColor = .yellow
+            cell.BGImageView.image = #imageLiteral(resourceName: "sample")
         }else if indexPath.row%3 == 1{
             cell.backgroundColor = .cyan
         }else{
+            cell.BGImageView.image = #imageLiteral(resourceName: "sample2")
             cell.backgroundColor = .red
         }
         cell.layoutIfNeeded()

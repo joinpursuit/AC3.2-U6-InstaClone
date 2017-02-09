@@ -24,10 +24,20 @@ class MainCollectionViewCell: UICollectionViewCell {
     }
     
     func setupViewHierarchy(){
+        self.addSubview(BGImageView)
+        BGImageView.addSubview(coverView)
         self.addSubview(categoryLabel)
     }
     
     func configureConstraints(){
+        BGImageView.snp.makeConstraints { (view) in
+            view.top.bottom.leading.trailing.equalToSuperview()
+        }
+        
+        coverView.snp.makeConstraints { (view) in
+            view.top.bottom.leading.trailing.equalToSuperview()
+        }
+        
         categoryLabel.snp.makeConstraints { (view) in
             view.width.equalToSuperview().multipliedBy(0.6)
             view.height.equalToSuperview().multipliedBy(0.2)
@@ -44,6 +54,20 @@ class MainCollectionViewCell: UICollectionViewCell {
         label.layer.borderColor = UIColor.white.cgColor
         label.layer.borderWidth = 2.0
         return label
+    }()
+    
+    lazy var BGImageView: UIImageView = {
+        let image = UIImageView()
+        image.clipsToBounds = true
+        image.contentMode = .scaleAspectFill
+        return image
+    }()
+    
+    lazy var coverView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .gray
+        view.alpha = 0.3
+        return view
     }()
     
     

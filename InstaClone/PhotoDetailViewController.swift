@@ -82,8 +82,6 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
         return cell
     }
     
-    
-    
     //MARK: - Lazy Inits
     lazy var imageView: UIImageView = {
         let view = UIImageView()

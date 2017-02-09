@@ -78,7 +78,7 @@ class Photo {
         
         userPhotoDirectory.updateChildValues(userPhotoDetail)
     }
-    
+    /*
     static func uploadSuccess(_ metadata: FIRStorageMetadata, storagePath: String) {
         print("Upload Succeeded!")
         //        self.urlTextView.text = metadata.downloadURL()?.absoluteString
@@ -95,5 +95,6 @@ class Photo {
         print(metadata.path)
         print(metadata.timeCreated)
     }
+    */
     
 }

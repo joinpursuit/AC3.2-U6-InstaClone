@@ -93,7 +93,16 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             })
         }
     }
-    
+    /*
+    func getUserAction () {
+        if let currentUserID = FIRAuth.auth()?.currentUser?.uid {
+            let userRef = databaseUsersReference.child(currentUserID)
+            userRef.observe(.value, with: { (snapshot) in
+                <#code#>
+            })
+        }
+    }
+    */
     func setNavigationBar() {
         self.navigationItem.hidesBackButton = true
         let logoutButton = UIBarButtonItem(title: "LOGOUT", style: UIBarButtonItemStyle.plain, target: self, action: #selector(logoutTapped))

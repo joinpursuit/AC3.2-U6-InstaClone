@@ -63,5 +63,4 @@ class Vote {
         userVoteReference.updateChildValues([photoIDString : upvoted])
         // [END user_vote_transaction]
     }
-    
 }

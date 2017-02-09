@@ -10,37 +10,39 @@ import UIKit
 import SnapKit
 import Firebase
 
-class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UICollectionViewDelegate, UICollectionViewDataSource {
     
     let databaseUsersReference = FIRDatabase.database().reference().child("users")
     let databasePhotosReference = FIRDatabase.database().reference().child("photos")
-
-    let storageReference = FIRStorage.storage()
+    
+    let storageReference = FIRStorage.storage().reference()
     
     var profilePicFilePath = ""
+    var userImages: [Photo] = []
+    var currentUserID: String?
     
     static let activityFeedCellIdentifyer: String = "activityFeedCell"
     static let myFont = UIFont.systemFont(ofSize: 16)
-
+    
     let activities: [String] = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.instaPrimary()
         setUpViewHeirachy()
         setConstraints()
         setNavigationBar()
-        
         getCurrentUser()
+        //getUploadedImagePaths()
     }
     
-
+    
     
     // MARK: SET UP
     
     func getCurrentUser() {
-        let userID = FIRAuth.auth()?.currentUser?.uid
-        _ = databaseUsersReference.child(userID!).observe(.value, with: { (snapshot) in
+        guard let userID = FIRAuth.auth()?.currentUser?.uid else { return }
+        _ = databaseUsersReference.child(userID).observe(.value, with: { (snapshot) in
             if let userDict = snapshot.value as? NSDictionary {
                 self.navigationItem.title = userDict["username"] as? String
                 if let profilePicID = userDict["profilePic"] as? String {
@@ -51,10 +53,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                         if let photoDict = snapshot2.value as? NSDictionary {
                             if let filePath = photoDict["filePath"] as? String {
                                 self.profilePicFilePath = filePath
+                                print(filePath)
+                                let imageRef = self.storageReference.child(filePath)
                                 
-                                let imageRef = self.storageReference.reference().child(filePath)
-                                
-                                imageRef.data(withMaxSize: 1 * 1024 * 1024, completion: { (data: Data?, error: Error?) in
+                                imageRef.data(withMaxSize: 10 * 1024 * 1024, completion: { (data: Data?, error: Error?) in
                                     if error != nil {
                                         print("Error \(error)")
                                     }
@@ -69,7 +71,25 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             }
         })
     }
-    
+    /*
+    func getUploadedImagePaths() {
+        if let currentUserID = FIRAuth.auth()?.currentUser?.uid {
+            self.currentUserID = currentUserID
+            databaseUsersReference.child(currentUserID).child("photos").observe(.value, with: { (snapshot) in
+                if let allUserPhotos = snapshot.value as? NSDictionary {
+                    let userImagePaths = allUserPhotos.allKeys as! [String]
+                    for path in userImagePaths {
+                        self.databasePhotosReference.child(imageKey).observe(.value, with: { (snapshot) in
+                            if let photoDictionary = snapshot.value as? NSDictionary {
+                                let photo = Photo
+                            }
+                        })
+                    }
+                }
+            })
+        }
+    }
+    */
     func setNavigationBar() {
         self.navigationItem.hidesBackButton = true
         let logoutButton = UIBarButtonItem(title: "LOGOUT", style: UIBarButtonItemStyle.plain, target: self, action: #selector(logoutTapped))
@@ -81,9 +101,12 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     func setUpViewHeirachy() {
         self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
         self.view.addSubview(yourUploadsLabel)
-        self.view.addSubview(scrollViewContainer)
         self.view.addSubview(feedTableView)
         self.view.addSubview(profileImageView)
+        self.view.addSubview(uploadedPhotosCollectionView)
+        
+        uploadedPhotosCollectionView.dataSource = self
+        uploadedPhotosCollectionView.delegate = self
     }
     
     func setConstraints() {
@@ -95,7 +118,8 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         feedTableView.snp.makeConstraints { (view) in
             view.leading.trailing.equalToSuperview()
             view.top.equalTo(profileImageView.snp.bottom)
-            view.bottom.equalTo(scrollViewContainer.snp.top)
+            view.bottom.equalTo(uploadedPhotosCollectionView.snp.top)
+            
         }
         
         yourUploadsLabel.snp.makeConstraints { (view) in
@@ -103,9 +127,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             view.height.equalTo(20)
         }
         
-        scrollViewContainer.snp.makeConstraints { (view) in
+        uploadedPhotosCollectionView.snp.makeConstraints { (view) in
+            view.top.equalTo(feedTableView.snp.bottom)
             view.leading.trailing.equalToSuperview()
-            view.height.equalTo(self.view.bounds.height * 0.15)
+            view.height.equalToSuperview().multipliedBy(0.15)
             view.bottom.equalTo(yourUploadsLabel.snp.top)
         }
     }
@@ -126,7 +151,30 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         return cell
     }
     
+    //MARK: - CollectionView Data Source Methods
     
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.userImages.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let smallPhotoCell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoPickerCollectionViewCell.cellID, for: indexPath) as! PhotoPickerCollectionViewCell
+        //        self.storageReference.child(filePath).data(withMaxSize: 10 * 1024 * 1024) { (data, error) in
+        //            if error != nil {
+        //                print(error?.localizedDescription)
+        //            }
+        //            if let validData = data {
+        //                smallPhotoCell.imageView.image = UIImage(data: validData)
+        //                smallPhotoCell.setNeedsLayout()
+        //            }
+        //        }
+        
+        return smallPhotoCell
+    }
     
     // MARK: - TARGET ACTION METHODS
     
@@ -150,10 +198,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.navigationController?.pushViewController(uploadVC, animated: true)
     }
     
-    
-    
     // MARK: - LAZY VIEW INITS
-
     
     lazy var profileImageView: UIImageView = {
         let view = UIImageView()
@@ -168,17 +213,11 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         let tapGestureRecognizer = UITapGestureRecognizer(target:self, action:#selector(profileImageTapped))
         view.isUserInteractionEnabled = true
         view.addGestureRecognizer(tapGestureRecognizer)
-
+        
         view.layer.shadowColor = UIColor.black.cgColor
         view.layer.shadowOpacity = 0.8
         view.layer.shadowOffset = CGSize(width: 0, height: 5)
         view.layer.shadowRadius = 8
-        return view
-    }()
-    
-    lazy var scrollViewContainer: UIView = {
-       let view = UIView()
-        view.backgroundColor = UIColor.instaPrimary()
         return view
     }()
     
@@ -197,7 +236,11 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         view.register(ActivityFeedTableViewCell.self, forCellReuseIdentifier: ProfileViewController.activityFeedCellIdentifyer)
         view.dataSource = self
         view.delegate = self
-       return view
+        return view
     }()
     
+    var uploadedPhotosCollectionView: PickerCollectionView = {
+        let view = PickerCollectionView()
+        return view
+    }()
 }

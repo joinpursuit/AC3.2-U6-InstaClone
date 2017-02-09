@@ -55,6 +55,7 @@ class Photo {
             "filePath" : uploadedPhoto.filePath as AnyObject,
             "date" : uploadedPhoto.date as AnyObject,
             "time" : uploadedPhoto.time as AnyObject,
+            "title" : uploadedPhoto.title as AnyObject,
 //            "votes" : uploadedPhoto.votes as AnyObject,
             "uploadedBy" : uploadedPhoto.uploadedBy as AnyObject,
             "category" : uploadedPhoto.category as AnyObject

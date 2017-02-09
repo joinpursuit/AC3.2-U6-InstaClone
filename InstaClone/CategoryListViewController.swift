@@ -20,8 +20,6 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
     }
     
     func setupViewHierarchy(){
-        self.navigationController?.navigationBar.barTintColor = UIColor.instaPrimaryDark()
-        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
         let backButton = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         self.navigationItem.backBarButtonItem = backButton
         self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)

@@ -95,9 +95,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     // MARK: TARGET ACTION METHODS
     
     func didTapRegisterButton() {
+        animateButton(sender: registerButton)
         print("register")
         if let email = usernameTextField.text, let password = passwordTextField.text {
-            
+            registerButton.isEnabled = false
             FIRAuth.auth()?.createUser(withEmail: email, password: password, completion: { (user: FIRUser?, error: Error?) in
                 if error != nil {
                     print("error with completion while creating new Authentication: \(error!)")
@@ -105,26 +106,13 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 if user != nil {
                     // create a new user with the UID
                     // on completion, segue to profile screen
-                    
-//                    let newUserRef = self.databaseReference.child(user!.uid)
-//                    let newUserDetails: [String: AnyObject] = [
-//                        "username" : email as AnyObject,
-//                        "password" : password as AnyObject
-//                    ]
-                    
-                    User.createUserInDatabase(email: email, completion: { 
+                    User.createUserInDatabase(email: email, completion: {
                         self.goToProfileView(animated: true)
                     })
-                    
-//                    newUserRef.setValue(newUserDetails, withCompletionBlock: { (error: Error?, reference: FIRDatabaseReference?) in
-//                        if error != nil {
-//                            print("Error creating new user: \(error)")
-//                        }
-//                        self.goToProfileView(animated: true)
-//                    })
                 } else {
                     self.showOKAlert(title: "Error", message: error?.localizedDescription)
                 }
+                self.registerButton.isEnabled = true
             })
         }
     }
@@ -132,9 +120,10 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     func didTapLoginButton() {
         print("login")
+        animateButton(sender: loginButton)
         if let username = usernameTextField.text,
             let password = passwordTextField.text{
-            
+            loginButton.isEnabled = false
             FIRAuth.auth()?.signIn(withEmail: username, password: password, completion: { (user: FIRUser?, error: Error?) in
                 if error != nil {
                     print("Erro \(error)")
@@ -145,6 +134,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
                 } else {
                     self.showOKAlert(title: "Error", message: error?.localizedDescription)
                 }
+                self.loginButton.isEnabled = true
             })
         }
     }
@@ -157,11 +147,37 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     func goToProfileView(animated: Bool) {
-        self.usernameTextField.text = nil
-        self.passwordTextField.text = nil
-        let profileView = ProfileViewController()
-        self.navigationController?.pushViewController(profileView, animated: animated)
+            if animated {
+            UIView.animate(withDuration: 0.5, animations: {
+                self.instaCloneLogo.transform = CGAffineTransform(rotationAngle: CGFloat.pi / 2)
+                self.view.layoutIfNeeded()
+            }) { (complete) in
+                let profileView = ProfileViewController()
+                self.navigationController?.pushViewController(profileView, animated: animated)
+                self.usernameTextField.text = nil
+                self.passwordTextField.text = nil
+                UIView.animate(withDuration: 0.0, delay: 0.5, options: [], animations: {
+                    self.instaCloneLogo.transform = CGAffineTransform.identity
+                }, completion: nil)
+            }
+        } else {
+            let profileView = ProfileViewController()
+            self.navigationController?.pushViewController(profileView, animated: animated)
+        }
+        
     }
+    
+    
+    internal func animateButton(sender: UIButton) {
+        let newTransform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+        let originalTransform = sender.imageView!.transform
+        UIView.animate(withDuration: 0.1, animations: {
+            sender.layer.transform = CATransform3DMakeAffineTransform(newTransform)
+        }, completion: { (complete) in
+            sender.layer.transform = CATransform3DMakeAffineTransform(originalTransform)
+        })
+    }
+
     
     
     // MARK: - LAZY VIEW INITS

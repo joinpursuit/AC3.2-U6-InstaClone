@@ -25,9 +25,10 @@ class PickerCollectionView: UICollectionView  {
         
         self.layout = horizontalLayout
         self.showsVerticalScrollIndicator = false
+        registerPhotoCell()
     }
     
-    func registerPhotoCell() {
+    private func registerPhotoCell() {
         self.register(PhotoPickerCollectionViewCell.self, forCellWithReuseIdentifier: PhotoPickerCollectionViewCell.cellID)
     }
     
@@ -66,11 +67,11 @@ class PhotoPickerCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureConstraints () {
+    private func configureConstraints () {
         self.imageView.snp.makeConstraints { (view) in
             view.top.trailing.bottom.leading.equalToSuperview()
         }
-    }
+    }    
 }
 
 

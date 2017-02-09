@@ -34,7 +34,21 @@ class Photo {
         self.downCount = downCount
     }
     
-    static func createPhotoInDatabase(for title: String, category: String, imagePath: String) {
+    convenience init?(dict: NSDictionary, photoID: String) {
+        guard let filePath = dict["filePath"] as? String,
+            let date = dict["date"] as? String,
+            let uploadedBy = dict["uploadedBy"] as? String,
+            let time = dict["time"] as? String,
+            let title = dict["title"] as? String,
+            let category = dict["category"] as? String,
+            let votesDict = dict["votes"] as? NSDictionary,
+            let upCount = votesDict["upvotes"] as? Int,
+            let downCount = votesDict["downvotes"] as? Int else { return nil }
+        
+        self.init(photoID: photoID, uploadedBy: uploadedBy, title: title, category: category, filePath: filePath, date: date, time: time, upCount: upCount, downCount: downCount)
+    }
+    
+    static func createPhotoInDatabase(for title: String, category: String, imagePath: String, uploadType: UploadType) {
         let date = Date()
         let dateStringFormatter = DateFormatter()
         dateStringFormatter.dateFormat = "yyyy-MM-dd"
@@ -78,6 +92,19 @@ class Photo {
         ]
         
         userPhotoDirectory.updateChildValues(userPhotoDetail)
+        
+        
+        // if this is a category pic, add photo ID to users photos
+        // else if a profile pic, add photo ID to user profile pic
+        
+        switch uploadType {
+        case .category:
+            print("Nothing to do here")
+        case .profile:
+            let databaseReference = FIRDatabase.database().reference().child("users").child(FIRAuth.auth()!.currentUser!.uid)
+            let profilePicRef = databaseReference.child("profilePic")
+            profilePicRef.setValue(uploadedPhoto.photoID)
+        }
     }
     
     static func uploadSuccess(_ metadata: FIRStorageMetadata, storagePath: String) {

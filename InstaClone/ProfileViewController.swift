@@ -12,7 +12,12 @@ import Firebase
 
 class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    let databaseReference = FIRDatabase.database().reference().child("users")
+    let databaseUsersReference = FIRDatabase.database().reference().child("users")
+    let databasePhotosReference = FIRDatabase.database().reference().child("photos")
+
+    let storageReference = FIRStorage.storage()
+    
+    var profilePicFilePath = ""
     
     static let activityFeedCellIdentifyer: String = "activityFeedCell"
     static let myFont = UIFont.systemFont(ofSize: 16)
@@ -35,9 +40,32 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func getCurrentUser() {
         let userID = FIRAuth.auth()?.currentUser?.uid
-        _ = databaseReference.child(userID!).observe(.value, with: { (snapshot) in
+        _ = databaseUsersReference.child(userID!).observe(.value, with: { (snapshot) in
             if let userDict = snapshot.value as? NSDictionary {
                 self.navigationItem.title = userDict["username"] as? String
+                if let profilePicID = userDict["profilePic"] as? String {
+                    print("profile pic id: \(profilePicID)")
+                    
+                    let photoRef = self.databasePhotosReference.child(profilePicID)
+                    photoRef.observe(.value, with: { (snapshot2) in
+                        if let photoDict = snapshot2.value as? NSDictionary {
+                            if let filePath = photoDict["filePath"] as? String {
+                                self.profilePicFilePath = filePath
+                                
+                                let imageRef = self.storageReference.reference().child(filePath)
+                                
+                                imageRef.data(withMaxSize: 1 * 1024 * 1024, completion: { (data: Data?, error: Error?) in
+                                    if error != nil {
+                                        print("Error \(error)")
+                                    }
+                                    if let validData = data {
+                                        self.profileImageView.image = UIImage(data: validData)
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
             }
         })
     }
@@ -117,7 +145,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func profileImageTapped() {
         print("show image picker")
-        // show image picker for profile view
+        let uploadVC = UploadViewController()
+        uploadVC.uploadType = .profile
+        self.navigationController?.pushViewController(uploadVC, animated: true)
     }
     
     
@@ -127,9 +157,12 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     lazy var profileImageView: UIImageView = {
         let view = UIImageView()
-        view.backgroundColor = UIColor.instaAccent()
-        let defaultProfilePic = UIImage(named: "defaultProfilePic")
-        view.image = defaultProfilePic
+        view.backgroundColor = UIColor.instaPrimary()
+        
+        let origImage = UIImage(named: "user_icon")
+        let tintedImage = origImage?.withRenderingMode(.alwaysTemplate)
+        view.image = tintedImage
+        view.tintColor = UIColor.instaAccent()
         view.contentMode = .scaleAspectFit
         
         let tapGestureRecognizer = UITapGestureRecognizer(target:self, action:#selector(profileImageTapped))

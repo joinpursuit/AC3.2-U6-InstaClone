@@ -7,32 +7,15 @@
 //
 
 import UIKit
-import SnapKit
 import Photos
+import FirebaseAuth
 import FirebaseStorage
 import FirebaseDatabase
-import FirebaseAuth
 
-enum ViewIdentifier: String {
-    case smallPhoto, largePhoto, overlay
-}
+class UploadViewController: UIViewController {
 
-class UploadViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UITextFieldDelegate {
-    
-    let categories = ["ANIMALS", "BEACH DAY", "LANDSCAPE", "CATS", "DOGS", "PIGS", "EVAN"]
-    var assests: PHFetchResult<PHAsset>!
-    let imageManager = PHImageManager()
-    let storageManager = FIRStorage.storage()
-    let databaseManager = FIRDatabase.database().reference()
-    var currentCategory: String?
-    
     override func viewDidLoad() {
-        view.backgroundColor = UIColor.instaPrimaryLight()
         super.viewDidLoad()
-        self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
-        setUpIdentifiersAndCells()
-        setUpViewHierarchyAndDelegates()
-        configureConstraints()
         view.backgroundColor = UIColor.instaPrimary()
         setUpPhotoFetcher()
         setUpNavigationItems()
@@ -171,6 +154,7 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         self.largePhotoCollectionView.accessibilityIdentifier = ViewIdentifier.largePhoto.rawValue
         self.largePhotoCollectionView.registerPhotoCell()
     }
+
     
     //MARK: - CollectionView Delegate Methods
     

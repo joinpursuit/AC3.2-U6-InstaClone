@@ -7,10 +7,10 @@
 //
 
 import UIKit
-import SnapKit
 
-class MainViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+class MainViewController: UIViewController {
 
+<<<<<<< HEAD
     var animator = UIViewPropertyAnimator(duration: 1.0, curve: .easeIn, animations: nil)
     var topCellIndex: IndexPath?
     var normalSize: CGSize?
@@ -23,24 +23,16 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         view.backgroundColor = UIColor.instaPrimary()
         self.normalSize = CGSize(width: self.view.frame.width, height: self.view.frame.width/2.5)
         self.largeSize = CGSize(width: self.view.frame.width, height: self.view.frame.width/1.8)
+=======
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = UIColor.instaPrimary()
+>>>>>>> 17336ff695b406198ddcd19805f4d4c632e40a94
 
-        setupViewHierarchy()
-        configureConstraints()
-    }
-    
-    func setupViewHierarchy(){
-        self.navigationItem.title = "CATEGORIES"
-        self.navigationController?.navigationBar.barTintColor = UIColor.instaPrimaryDark()
-        self.navigationController?.navigationBar.tintColor = UIColor.instaAccent()
-        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
-        let backButton = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        self.navigationItem.backBarButtonItem = backButton
-        self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
-        self.view.addSubview(mainCollectionV)
-        mainCollectionV.register(MainCollectionViewCell.self, forCellWithReuseIdentifier: ReuseIdentifierForCell)
-        
+        // Do any additional setup after loading the view.
     }
 
+<<<<<<< HEAD
     func configureConstraints(){
         mainCollectionV.snp.makeConstraints { (view) in
             view.leading.trailing.bottom.top.equalToSuperview()
@@ -105,21 +97,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         self.mainCollectionV.reloadData()
         self.mainCollectionV.scrollToItem(at: currrentIndex, at: UICollectionViewScrollPosition.top, animated: true)
     }
+=======
+>>>>>>> 17336ff695b406198ddcd19805f4d4c632e40a94
     
-    //Mark: - Lazy Inits
-    lazy var mainCollectionV: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .vertical
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        layout.itemSize = self.normalSize!
-        
-        layout.minimumInteritemSpacing = 0
-        layout.minimumLineSpacing = 0
-        
-        let cView = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
-        cView.backgroundColor = .white
-        cView.delegate = self
-        cView.dataSource = self
-        return cView
-    }()
 }

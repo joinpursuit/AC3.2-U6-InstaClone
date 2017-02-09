@@ -52,6 +52,8 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifierForCell, for: indexPath) as! CategoryListCollectionViewCell
         
         let currentPhoto = self.images[indexPath.row]
+        cell.indexxx = indexPath
+        
         self.storageReference.child(currentPhoto.filePath).data(withMaxSize: 10 * 1024 * 1024) { (data, error) in
             if error != nil {
                 print(error!.localizedDescription)
@@ -62,21 +64,7 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
             }
         }
 
-        cell.indexxx = indexPath
         
-        //pass image and data to cell
-        /*
-        if indexPath.row%3 == 2{
-            cell.backgroundColor = .yellow
-            cell.BGImageView.image = #imageLiteral(resourceName: "sample")
-        }else if indexPath.row%3 == 1{
-            cell.backgroundColor = .cyan
-        }else{
-            cell.BGImageView.image = #imageLiteral(resourceName: "sample2")
-            cell.backgroundColor = .red
-        }
-        cell.layoutIfNeeded()
-        */
         return cell
     }
     

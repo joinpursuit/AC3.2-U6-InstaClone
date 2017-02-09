@@ -28,6 +28,10 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         configureConstraints()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        mainCollectionV.reloadData()
+    }
+    
     func setupViewHierarchy(){
         self.navigationItem.title = "CATEGORIES"
         let backButton = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
@@ -35,7 +39,6 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
         self.view.addSubview(mainCollectionV)
         mainCollectionV.register(MainCollectionViewCell.self, forCellWithReuseIdentifier: ReuseIdentifierForCell)
-        
     }
 
     func configureConstraints(){
@@ -64,9 +67,34 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let categoryView = CategoryListViewController()
-        categoryView.navigationItem.title = MainViewController.categories[indexPath.row]
-        self.navigationController?.pushViewController(categoryView, animated: true)
+        let currentCell = collectionView.cellForItem(at: indexPath) as! MainCollectionViewCell
+        let animator = UIViewPropertyAnimator(duration: 0.4, curve: .easeOut, animations: nil)
+        animator.addAnimations {
+            currentCell.categoryLabel.layer.borderWidth = 10.0
+            currentCell.categoryLabel.snp.remakeConstraints({ (view) in
+                view.width.height.equalToSuperview()
+                view.center.equalToSuperview()
+            })
+            currentCell.layoutIfNeeded()
+        }
+        
+        animator.addCompletion { (_) in
+            let categoryView = CategoryListViewController()
+            categoryView.navigationItem.title = MainViewController.categories[indexPath.row]
+            self.navigationController?.pushViewController(categoryView, animated: true)
+        }
+        
+        animator.startAnimation()
+        
+       
+        
+        
+        
+        
+        
+        
+        
+
     }
     
 //    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {

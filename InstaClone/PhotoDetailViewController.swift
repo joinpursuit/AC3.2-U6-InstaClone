@@ -13,16 +13,12 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
         
         setupViewHierarchy()
         configureConstraints()
     }
     
     func setupViewHierarchy(){
-        self.navigationController?.navigationBar.barTintColor = UIColor.instaPrimaryDark()
-        self.navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: UIColor.white]
-        self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
         activitiesTableView.register(ActivityFeedTableViewCell.self, forCellReuseIdentifier: ProfileViewController.activityFeedCellIdentifyer)
         
         self.view.addSubview(imageView)

@@ -25,7 +25,6 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
         self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
 
         self.view.addSubview(categoryCollectionV)
-        
         categoryCollectionV.register(CategoryListCollectionViewCell.self, forCellWithReuseIdentifier: ReuseIdentifierForCell)
         
     }

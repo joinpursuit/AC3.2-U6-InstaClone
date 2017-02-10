@@ -99,6 +99,8 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
     
     func didPressDownVoteButton() {
         print("down")
+        let ref = FIRDatabase.database().reference().child("photos").child(currentPhoto.category).child(currentPhoto.photoID)
+        Vote.voted(for: ref, upvoted: false)
 //        placeVote(voteType: "downvotes", startingValue: currentPhoto.downCount)
     }
     

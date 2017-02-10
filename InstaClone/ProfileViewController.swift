@@ -32,7 +32,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         setConstraints()
         setNavigationBar()
         getCurrentUser()
-        print(activities)
+        getUserAction()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -231,6 +231,8 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         })
     }
     
+
+    
     // MARK: - TABLEVIEW DATA SOURCE METHODS
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -241,10 +243,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         let cell = tableView.dequeueReusableCell(withIdentifier: ProfileViewController.activityFeedCellIdentifyer, for: indexPath) as! ActivityFeedTableViewCell
         
         let currentActivity = self.activities[indexPath.row]
-        
+        dump(currentActivity)
         cell.backgroundColor = UIColor.instaPrimaryLight()
         cell.profileImageView.image = #imageLiteral(resourceName: "user_icon")
-        cell.activityDateLabel.text = currentActivity.time
+        cell.activityDateLabel.text = "at \(currentActivity.time) on \(currentActivity.date)"
         
         var thisPhotoFilePath = ""
  
@@ -256,6 +258,17 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                     thisPhotoFilePath = thisPhotoDict["filePath"] as! String
                     
                     cell.activityTextLabel.text = "You uploaded \(thisPhotoTitle) "
+                    
+                    let imageRef = self.storageReference.child(thisPhotoFilePath)
+                    imageRef.data(withMaxSize: 10 * 1024 * 1024, completion: { (data: Data?, error: Error?) in
+                        if error != nil {
+                            print("Error \(error)")
+                        }
+                        if let validData = data {
+                            cell.profileImageView.image = UIImage(data: validData)
+                            cell.setNeedsLayout()
+                        }
+                    })
                 }
             })
         }
@@ -265,7 +278,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             thisPhotoFilePath = photoFilePath
             
             let direction = voteBool ? "up" : "down"
-            cell.activityTextLabel.text = "You voted \(currentActivity.imageName) \(direction)"
+            cell.activityTextLabel.text = "You voted \(currentActivity.imageName!) \(direction)"
         }
         
         let imageRef = self.storageReference.child(thisPhotoFilePath)

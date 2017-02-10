@@ -29,14 +29,12 @@ class UserActivity {
         self.photoID = photoID
         self.value = value
         self.filePath = filePath
+        self.category = category
     }
     
     convenience init?(dict: [String : AnyObject], value: Bool?) {
-        
         guard let date = dict["date"] as? String,
-            let time = dict["time"] as? String else {
-                print("failing")
-                return nil }
+            let time = dict["time"] as? String else { return nil }
         let imageName = dict["imageName"] as? String
         let photoID = dict["photoID"] as? String
         let category = dict["category"] as? String

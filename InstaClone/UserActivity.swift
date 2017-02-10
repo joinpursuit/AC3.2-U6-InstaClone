@@ -13,30 +13,33 @@ enum TypeOfActivity {
 }
 
 class UserActivity {
-    var imageName: String
+    var imageName: String?
     var date: String
     var time: String
-    var photoID: String
+    var photoID: String?
+    var category: String?
     var value: Bool?
-    var filePath: String
+    var filePath: String?
     
-    init(imageName: String, date: String, time: String, photoID: String, value: Bool?, filePath: String) {
+    
+    init(imageName: String?, date: String, time: String, photoID: String?, category: String?, value: Bool?, filePath: String?) {
         self.imageName = imageName
         self.date = date
         self.time = time
         self.photoID = photoID
         self.value = value
         self.filePath = filePath
+        self.category = category
     }
     
     convenience init?(dict: [String : AnyObject], value: Bool?) {
-        guard let imageName = dict["imageName"] as? String,
-        let date = dict["date"] as? String,
-        let time = dict["time"] as? String,
-        let photoID = dict["photoID"] as? String,
-            let filePath = dict["filePath"] as? String  else { return nil }
-                
-        self.init(imageName: imageName, date: date, time: time, photoID: photoID, value: value, filePath: filePath)
+        guard let date = dict["date"] as? String,
+            let time = dict["time"] as? String else { return nil }
+        let imageName = dict["imageName"] as? String
+        let photoID = dict["photoID"] as? String
+        let category = dict["category"] as? String
+        let filePath = dict["filePath"] as? String
+        self.init(imageName: imageName, date: date, time: time, photoID: photoID, category: category, value: value, filePath: filePath)
     }
     
 }

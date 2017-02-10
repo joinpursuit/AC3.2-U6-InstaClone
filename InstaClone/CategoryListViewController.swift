@@ -40,8 +40,6 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
         //setObserver()
     }
     
-    
-    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
@@ -135,6 +133,7 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
 //    }
 
     
+    
     //MARK: - Collection View Delegate
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.images.count
@@ -207,7 +206,7 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
         let view = UILabel()
         view.backgroundColor = UIColor.instaPrimary()
         view.textColor = UIColor.instaAccent()
-        view.text = "THERE ARE NO PHOTOS UPLOADED FOR THIS CATEGORY"
+        view.text = "THERE ARE NO PHOTOS\nUPLOADED FOR THIS CATEGORY"
         view.textAlignment = .center
         view.isHidden = true
         return view

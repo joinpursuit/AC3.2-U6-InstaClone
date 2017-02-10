@@ -244,6 +244,7 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
     
     lazy var activitiesTableView: UITableView = {
         let view = UITableView()
+        view.backgroundColor = UIColor.instaPrimaryLight()
         view.delegate = self
         view.dataSource = self
         return view

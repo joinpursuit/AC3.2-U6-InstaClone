@@ -334,7 +334,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         case .category:
             print("completed category upload")
         // needs to switch screen to that category's photo feed
-            tabBarController?.selectedIndex = 0
+            
+            self.tabBarController?.selectedIndex = 0
         case .profile:
             if let profileVC = navigationController?.viewControllers[1] as? ProfileViewController {
                 profileVC.profileImageView.image = image

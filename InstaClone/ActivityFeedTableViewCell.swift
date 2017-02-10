@@ -38,16 +38,15 @@ class ActivityFeedTableViewCell: UITableViewCell {
         }
         
         activityTextLabel.snp.makeConstraints { (view) in
-            view.leading.equalTo(profileImageView.snp.trailing).offset(8)
+            view.leading.equalTo(profileImageView.snp.trailing).offset(16)
             view.trailing.equalToSuperview().inset(4)
-            view.top.equalToSuperview()
-            view.bottom.equalTo(activityDateLabel.snp.top)
+            view.bottom.equalTo(self.snp.centerY)
         }
         
         activityDateLabel.snp.makeConstraints { (view) in
             view.trailing.equalToSuperview().inset(4)
-            view.leading.equalTo(profileImageView.snp.trailing).offset(8)
-            view.bottom.equalToSuperview()
+            view.leading.equalTo(profileImageView.snp.trailing).offset(26)
+            view.top.equalTo(activityTextLabel.snp.bottom).offset(2)
         }
     }
 
@@ -67,13 +66,16 @@ class ActivityFeedTableViewCell: UITableViewCell {
     
     lazy var activityTextLabel: UILabel = {
         let view = UILabel()
-        view.textAlignment = .center
+        view.textAlignment = .left
        return view
     }()
     
     lazy var activityDateLabel: UILabel = {
         let view = UILabel()
-        view.textAlignment = .center
+        view.font = UIFont.systemFont(ofSize: 12, weight: UIFontWeightLight)
+        view.textAlignment = .left
+        view.textColor = UIColor.instaSecondaryText()
+        view.alpha = 0.7
         return view
     }()
     

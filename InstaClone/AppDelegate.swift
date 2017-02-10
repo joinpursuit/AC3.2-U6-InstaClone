@@ -25,6 +25,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window?.makeKeyAndVisible()
         
         setNavigationTheme()
+        
+        if self.window!.rootViewController as? UITabBarController != nil {
+            let tababarController = self.window!.rootViewController as! UITabBarController
+            if FIRAuth.auth()?.currentUser == nil {
+                tababarController.selectedIndex = 2
+            }
+        }
+        
         return true
     }
     

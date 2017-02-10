@@ -17,8 +17,12 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
     var images: [Photo] = []
     var currrentCells: [UICollectionViewCell] = []
     let databasePhotosReference = FIRDatabase.database().reference().child("photos")
+    let databaseVotesReference = FIRDatabase.database().reference().child("votes")
     let storageReference = FIRStorage.storage().reference()
+
     var dynamicAnimator: UIDynamicAnimator?
+    
+    var databaseObserver: FIRDatabaseHandle?
 
     var normalSize: CGSize?
     var smallSize: CGSize?
@@ -29,14 +33,24 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
         setupViewHierarchy()
         configureConstraints()
         getImages()
+        
         DispatchQueue.main.async {
             self.categoryCollectionV.reloadData()
         }
+        //setObserver()
+    }
+    
+    
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        // should probably put the setObserver func in view will appear
+        databaseVotesReference.removeAllObservers()
     }
     
     func setupViewHierarchy(){
-        let backButton = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        self.navigationItem.backBarButtonItem = backButton
+        self.navigationController?.navigationBar.tintColor = UIColor.instaAccent()
         self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
         
         self.normalSize = CGSize(width: self.view.frame.width/2, height: self.view.frame.width/2)
@@ -45,6 +59,7 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
         self.view.addSubview(categoryCollectionV)
         categoryCollectionV.addSubview(snapButton)
         self.categoryCollectionV.addSubview(refreshControl)
+        self.view.addSubview(noPhotosLabel)
         categoryCollectionV.register(CategoryListCollectionViewCell.self, forCellWithReuseIdentifier: ReuseIdentifierForCell)
         self.refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
         snapButton.addTarget(self, action: #selector(bringCellsBack), for: .touchUpInside)
@@ -88,7 +103,35 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
         snapButton.snp.makeConstraints { (view) in
             view.center.equalToSuperview()
         }
+        
+        noPhotosLabel.snp.makeConstraints { (view) in
+            view.top.bottom.leading.trailing.equalToSuperview()
+        }
     }
+    
+    // Tom was working on live updatng the votes in the collection view...
+    
+//    private func setObserver() {
+////        guard let category = navigationItem.title else { return }
+////        let thisCategoryDatabaseReference = databasePhotosReference.child(category)
+//
+//        databaseObserver = databaseVotesReference.observe(.childAdded, with: { (snapshot: FIRDataSnapshot) in
+//            if let thisPhotoVotesDict = snapshot.value as? NSDictionary {
+//                print("ZZZZZZZZZZZZZZZZZZZZZZ/n/n")
+//                dump(thisPhotoVotesDict)
+////                let up = voteDict["upvotes"] as! Int
+////                let down = voteDict["downvotes"] as! Int
+//                
+//                // get the photoID and find the cell to change
+//                
+////                self.upCountLabel.text = String(up)
+////                self.downCountLabel.text = String(down)
+////                self.currentPhoto.upCount = up
+////                self.currentPhoto.downCount = down
+//            }
+//        })
+//    }
+
     
     //MARK: - Collection View Delegate
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -139,7 +182,7 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
         layout.minimumLineSpacing = 0
         
         let cView = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
-        cView.backgroundColor = .white
+        cView.backgroundColor = UIColor.instaPrimary()
         cView.delegate = self
         cView.dataSource = self
         return cView
@@ -157,6 +200,17 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
         refreshControl.addTarget(self, action: #selector(CategoryListViewController.refreshWithAnimation), for: UIControlEvents.valueChanged)
         return refreshControl
     }()
+
+    lazy var noPhotosLabel: UILabel = {
+        let view = UILabel()
+        view.backgroundColor = UIColor.instaPrimary()
+        view.textColor = UIColor.instaAccent()
+        view.text = "YOU HAVE NO UPLOADED PHOTOS"
+        view.textAlignment = .center
+        view.isHidden = true
+        return view
+    }()
+
     
     //MARK: Pull Category Images
     
@@ -164,7 +218,11 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
         self.images = []
         guard let category = self.navigationItem.title else { return }
         databasePhotosReference.child(category).observe(.value, with: { (snapshot) in
-            
+            if snapshot.children.allObjects.count == 0 {
+                self.noPhotosLabel.isHidden = false
+            } else {
+                self.noPhotosLabel.isHidden = true
+            }
             let children = snapshot.children
             while let child = children.nextObject() as? FIRDataSnapshot {
                 

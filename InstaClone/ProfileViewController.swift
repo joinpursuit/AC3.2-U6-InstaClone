@@ -25,6 +25,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     var activities: [UserActivity] = []
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         self.view.backgroundColor = UIColor.instaPrimary()
         setUpViewHeirachy()
@@ -36,6 +37,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        self.userImages = []
         getUploadedImagePaths()
         getUserAction()
     }

@@ -103,7 +103,6 @@ class Photo {
             profilePicRef.setValue(photoDetails)
             
         }
-               
     }
     
     static func uploadSuccess(_ metadata: FIRStorageMetadata, storagePath: String) {
@@ -115,12 +114,6 @@ class Photo {
         UserDefaults.standard.set(storagePath, forKey: "storagePath")
         UserDefaults.standard.synchronize()
         //        self.downloadPicButton.isEnabled = true
-        
-        print(metadata.bucket)
-        print(metadata.downloadURL())
-        print(metadata.downloadURLs)
-        print(metadata.path)
-        print(metadata.timeCreated)
     }
     
 }

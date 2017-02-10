@@ -101,7 +101,7 @@ class Vote {
         let photoIDString = URL(string: photoID.description())!.lastPathComponent
         
         // [START vote_vote_transaction]
-        let databaseVoteReference = FIRDatabase.database().reference().child("votes").child(currentUserString)
+        let databaseVoteReference = FIRDatabase.database().reference().child("votes").child(photoIDString).child(currentUserString)
         databaseVoteReference.updateChildValues(["value" : upvoted])
         databaseVoteReference.updateChildValues(["time": timeString])
         databaseVoteReference.updateChildValues(["date": dateString])

@@ -22,7 +22,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     static let activityFeedCellIdentifyer: String = "activityFeedCell"
     static let myFont = UIFont.systemFont(ofSize: 16)
     
-    let activities: [String] = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+    var activities: [[String: AnyObject]] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,6 +31,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         setConstraints()
         setNavigationBar()
         getCurrentUser()
+        getUserAction()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -70,19 +71,17 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             let userPhotosReference = databaseUsersReference.child(currentUserID).child("photos")
             userPhotosReference.observe(.value, with: { (snapshot) in
                 let allUserPhotos = snapshot.children
-                    while let photoSnapshot = allUserPhotos.nextObject() as? FIRDataSnapshot,
-                        let photoDict = photoSnapshot.value as? NSDictionary {
+                while let photoSnapshot = allUserPhotos.nextObject() as? FIRDataSnapshot,
+                    let photoDict = photoSnapshot.value as? NSDictionary {
                         guard let category = photoDict["category"] as? String else { continue }
-                            let photoID = photoSnapshot.key
+                        let photoID = photoSnapshot.key
                         let path = category + "/" + photoID
                         self.databasePhotosReference.child(path).observe(.value, with: { (photoInfoSnapshot) in
                             if let photoDictionary = photoInfoSnapshot.value as? NSDictionary,
                                 let photo = Photo(dict: photoDictionary, photoID: photoID) {
-                                print("photo created")
                                 self.userImages.append(photo)
                                 print(snapshot.childrenCount)
                                 if self.userImages.count == Int(snapshot.childrenCount) {
-                                    print("reloading data")
                                     self.uploadedPhotosCollectionView.reloadData()
                                 }
                             } else {
@@ -93,16 +92,56 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             })
         }
     }
-    /*
+    
     func getUserAction () {
         if let currentUserID = FIRAuth.auth()?.currentUser?.uid {
             let userRef = databaseUsersReference.child(currentUserID)
-            userRef.observe(.value, with: { (snapshot) in
-                <#code#>
+            var userActivity = [[String: AnyObject]]()
+            var allVotes = false
+            var allPhotos = false
+            
+            userRef.child("votes").observe(.value, with: { (votesSnapshot) in
+                let votes = votesSnapshot.children
+                var voteActivity = [[String: AnyObject]]()
+
+                while let vote = votes.nextObject() as? FIRDataSnapshot,
+                    let voteDict = vote.value as? [String: AnyObject] {
+
+                        voteActivity.append(voteDict)
+                        
+                        if voteActivity.count == Int(votesSnapshot.childrenCount) {
+                            userActivity += voteActivity
+                            allVotes = true
+                        }
+                        
+                        if allVotes && allPhotos {
+                            self.activities = userActivity
+                            self.feedTableView.reloadData()
+                        }
+                }
+            })
+            
+            userRef.child("photos").observe(.value, with: { (photosSnapshot) in
+                let photos = photosSnapshot.children
+                var photoActivity = [[String: AnyObject]]()
+                while let photo = photos.nextObject() as? FIRDataSnapshot,
+                    let photoDict = photo.value as? [String: AnyObject] {
+                        
+                        photoActivity.append(photoDict)
+                        if photoActivity.count == Int(photosSnapshot.childrenCount) {
+                            userActivity += photoActivity
+                            allPhotos = true
+                        }
+                        
+                        if allVotes && allPhotos {
+                            self.activities = userActivity
+                            self.feedTableView.reloadData()
+                        }
+                }
             })
         }
     }
-    */
+    
     func setNavigationBar() {
         self.navigationItem.hidesBackButton = true
         let logoutButton = UIBarButtonItem(title: "LOGOUT", style: UIBarButtonItemStyle.plain, target: self, action: #selector(logoutTapped))
@@ -158,9 +197,11 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ProfileViewController.activityFeedCellIdentifyer, for: indexPath) as! ActivityFeedTableViewCell
         
+        let currentActivity = self.activities[indexPath.row]
+        print(currentActivity)
+        
         cell.profileImageView.image = #imageLiteral(resourceName: "user_icon")
-        cell.activityTextLabel.text = activities[indexPath.row]
-        cell.activityDateLabel.text = "11:30PM"
+        cell.activityDateLabel.text = currentActivity["time"] as? String
         return cell
     }
     

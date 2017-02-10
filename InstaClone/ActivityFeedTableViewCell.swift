@@ -21,6 +21,7 @@ class ActivityFeedTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    
     func setUpView() {
         self.contentView.addSubview(profileImageView)
         self.contentView.addSubview(activityTextLabel)

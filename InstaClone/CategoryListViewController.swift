@@ -24,6 +24,9 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
     
     var databaseObserver: FIRDatabaseHandle?
 
+    var normalSize: CGSize?
+    var smallSize: CGSize?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

@@ -56,11 +56,13 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ReuseIdentifierForCell, for: indexPath) as! MainCollectionViewCell
         
         let categoriesAtRow = MainViewController.categories[indexPath.row]
-//        cell.BGImageView.image = UIImage(named: "\(categoriesAtRow)1")
-//        cell.BGImageView.animationImages = [UIImage(named: "\(categoriesAtRow)2")!, UIImage(named: "\(categoriesAtRow)3")!]
-//        cell.BGImageView.animationDuration = Double(arc4random_uniform(7) + 3)
-//        cell.BGImageView.animationRepeatCount = 0
-//        cell.BGImageView.startAnimating()
+        
+        // old code in case anyone wants to use it
+        //        cell.BGImageView.image = UIImage(named: "\(categoriesAtRow)1")
+        //        cell.BGImageView.animationImages = [UIImage(named: "\(categoriesAtRow)2")!, UIImage(named: "\(categoriesAtRow)3")!]
+        //        cell.BGImageView.animationDuration = Double(arc4random_uniform(7) + 3)
+        //        cell.BGImageView.animationRepeatCount = 0
+        //        cell.BGImageView.startAnimating()
         
         animateImages(for: categoriesAtRow, cellView: cell.BGImageView, count: 0)
         
@@ -75,6 +77,10 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         
         let image: UIImage = images[(count % images.count)]!
         
+        if count > images.count {
+            return
+        }
+        
         let toImage = image
         UIView.transition(with: cellView, duration: 2.0, options: .transitionCrossDissolve, animations: {
             cellView.image = toImage
@@ -83,18 +89,18 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         })
     }
     
-//    func setNewImageWithFade(imageData: Data) {
-//        UIView.animate(withDuration: 0.2, animations: {
-//            self.BGImageView.alpha = 0.0
-//            self.view.setNeedsLayout()
-//        }, completion: { (bool) in
-//            self.BGImageView.image = UIImage(data: imageData)
-//            UIView.animate(withDuration: 0.2, animations: {
-//                self.BGImageView.alpha = 1.0
-//                self.view.setNeedsLayout()
-//            })
-//        })
-//    }
+    //    func setNewImageWithFade(imageData: Data) {
+    //        UIView.animate(withDuration: 0.2, animations: {
+    //            self.BGImageView.alpha = 0.0
+    //            self.view.setNeedsLayout()
+    //        }, completion: { (bool) in
+    //            self.BGImageView.image = UIImage(data: imageData)
+    //            UIView.animate(withDuration: 0.2, animations: {
+    //                self.BGImageView.alpha = 1.0
+    //                self.view.setNeedsLayout()
+    //            })
+    //        })
+    //    }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let currentCell = collectionView.cellForItem(at: indexPath) as! MainCollectionViewCell

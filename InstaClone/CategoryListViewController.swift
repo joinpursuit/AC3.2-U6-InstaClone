@@ -17,6 +17,9 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
     var images: [Photo] = []
     let databasePhotosReference = FIRDatabase.database().reference().child("photos")
     let storageReference = FIRStorage.storage().reference()
+    
+    
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,6 +55,8 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
         
         let currentPhoto = self.images[indexPath.row]
         cell.indexxx = indexPath
+        cell.upVoteLabel.text = String(self.images[indexPath.item].upCount)
+        cell.downVoteLabel.text = String(self.images[indexPath.item].downCount)
         
         self.storageReference.child(currentPhoto.filePath).data(withMaxSize: 10 * 1024 * 1024) { (data, error) in
             if error != nil {
@@ -62,8 +67,6 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
                 cell.layoutIfNeeded()
             }
         }
-
-        
         return cell
     }
     

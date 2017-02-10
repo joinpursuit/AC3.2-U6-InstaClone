@@ -51,6 +51,8 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
     
     func setupViewHierarchy(){
         self.navigationController?.navigationBar.tintColor = UIColor.instaAccent()
+        let backButton = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+        self.navigationItem.backBarButtonItem = backButton
         self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
         
         self.normalSize = CGSize(width: self.view.frame.width/2, height: self.view.frame.width/2)

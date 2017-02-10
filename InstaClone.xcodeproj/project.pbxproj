@@ -17,6 +17,8 @@
 		1F37DA6C9C5B369ABCCBF44D /* Pods_InstaClone.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CD069F3EAA6F91E07E4E362 /* Pods_InstaClone.framework */; };
 		81661B401E492C8A0044756A /* PhotoPickerCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81661B3E1E492C8A0044756A /* PhotoPickerCollectionView.swift */; };
 		81661B411E492C8A0044756A /* WhiteBorderButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81661B3F1E492C8A0044756A /* WhiteBorderButton.swift */; };
+		81773B901E4E16CA002B3533 /* PhotoActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81773B8F1E4E16CA002B3533 /* PhotoActivity.swift */; };
+		81F969FD1E4E2CC90032265B /* UserActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81F969FC1E4E2CC90032265B /* UserActivity.swift */; };
 		9E119EE91E4BDE090010C395 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9E119EE81E4BDE090010C395 /* GoogleService-Info.plist */; };
 		DE21AFF21E491B230088FC20 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE21AFF11E491B230088FC20 /* AppDelegate.swift */; };
 		DE21AFF91E491B230088FC20 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DE21AFF81E491B230088FC20 /* Assets.xcassets */; };
@@ -42,6 +44,8 @@
 		5CD069F3EAA6F91E07E4E362 /* Pods_InstaClone.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_InstaClone.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		81661B3E1E492C8A0044756A /* PhotoPickerCollectionView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoPickerCollectionView.swift; sourceTree = "<group>"; };
 		81661B3F1E492C8A0044756A /* WhiteBorderButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WhiteBorderButton.swift; sourceTree = "<group>"; };
+		81773B8F1E4E16CA002B3533 /* PhotoActivity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoActivity.swift; sourceTree = "<group>"; };
+		81F969FC1E4E2CC90032265B /* UserActivity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserActivity.swift; sourceTree = "<group>"; };
 		9E119EE81E4BDE090010C395 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D7B2E51238E0F4F2FC97BB11 /* Pods-InstaClone.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-InstaClone.debug.xcconfig"; path = "Pods/Target Support Files/Pods-InstaClone/Pods-InstaClone.debug.xcconfig"; sourceTree = "<group>"; };
 		DE21AFEE1E491B230088FC20 /* InstaClone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InstaClone.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -141,6 +145,8 @@
 				06C80F851E4B930700BEE5F9 /* User.swift */,
 				06C80F871E4B931D00BEE5F9 /* Photo.swift */,
 				06C80F891E4B932500BEE5F9 /* Vote.swift */,
+				81773B8F1E4E16CA002B3533 /* PhotoActivity.swift */,
+				81F969FC1E4E2CC90032265B /* UserActivity.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -299,12 +305,14 @@
 				06C80F881E4B931D00BEE5F9 /* Photo.swift in Sources */,
 				060F4D581E498C14001B7475 /* CategoryListCollectionViewCell.swift in Sources */,
 				81661B411E492C8A0044756A /* WhiteBorderButton.swift in Sources */,
+				81F969FD1E4E2CC90032265B /* UserActivity.swift in Sources */,
 				DE21B00F1E4926580088FC20 /* Utility.swift in Sources */,
 				060F4D561E494B3B001B7475 /* CategoryListViewController.swift in Sources */,
 				DE21B0151E496A950088FC20 /* UnderlineTextField.swift in Sources */,
 				81661B401E492C8A0044756A /* PhotoPickerCollectionView.swift in Sources */,
 				06C80F841E4A308000BEE5F9 /* PhotoDetailViewController.swift in Sources */,
 				060F4D521E493D99001B7475 /* MainCollectionViewCell.swift in Sources */,
+				81773B901E4E16CA002B3533 /* PhotoActivity.swift in Sources */,
 				06C80F861E4B930700BEE5F9 /* User.swift in Sources */,
 				DE21B0061E491FF60088FC20 /* MainViewController.swift in Sources */,
 				06C80F8A1E4B932500BEE5F9 /* Vote.swift in Sources */,

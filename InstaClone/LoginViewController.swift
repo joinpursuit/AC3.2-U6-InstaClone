@@ -33,6 +33,32 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         setTextFieldDelegate()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        instaCloneLogo.startRotating(duration: 4)
+        
+//        self.usernameTextField.text = nil
+//        self.passwordTextField.text = nil
+        
+        UIView.animate(withDuration: 0.0, animations: {
+            self.usernameTextField.transform = CGAffineTransform.identity
+            self.passwordTextField.transform = CGAffineTransform.identity
+            self.loginButton.transform = CGAffineTransform.identity
+            self.registerButton.transform = CGAffineTransform.identity
+        }, completion: nil)
+        
+        instaCloneLogo.snp.removeConstraints()
+        usernameTextField.snp.removeConstraints()
+        passwordTextField.snp.removeConstraints()
+        loginButton.snp.removeConstraints()
+        registerButton.snp.removeConstraints()
+        
+        setConstraints()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        self.instaCloneLogo.stopRotating()
+    }
+    
     
     // MARK: SET UP
     
@@ -147,19 +173,79 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     }
     
     func goToProfileView(animated: Bool) {
-            if animated {
-            UIView.animate(withDuration: 0.5, animations: {
-                self.instaCloneLogo.transform = CGAffineTransform(rotationAngle: CGFloat.pi / 2)
+        instaCloneLogo.stopRotating()
+        instaCloneLogo.startRotating()
+        if animated {
+            let animator = UIViewPropertyAnimator(duration: 2.4, curve: .easeIn, animations: nil)
+            
+            animator.addAnimations({ 
+                self.instaCloneLogo.snp.remakeConstraints { (view) in
+                    view.center.equalToSuperview()
+                    view.width.height.equalTo(self.view.bounds.width / 1.2)
+                }
                 self.view.layoutIfNeeded()
-            }) { (complete) in
+            }, delayFactor: 0.0)
+            
+            animator.addAnimations({ 
+                self.usernameTextField.snp.remakeConstraints { (view) in
+                    view.width.equalTo(self.view.bounds.width * 0.8)
+                    view.centerY.equalToSuperview()
+                    view.trailing.equalTo(self.view.snp.leading)
+                }
+                self.usernameTextField.transform = CGAffineTransform(rotationAngle: CGFloat.pi / 2)
+                self.view.layoutIfNeeded()
+            }, delayFactor: 0.1)
+            
+            animator.addAnimations({
+                self.passwordTextField.snp.remakeConstraints { (view) in
+                    view.centerY.equalToSuperview()
+                    view.width.equalTo(self.usernameTextField.snp.width)
+                    view.leading.equalTo(self.view.snp.trailing)
+                }
+                self.passwordTextField.transform = CGAffineTransform(rotationAngle: CGFloat.pi / 0.7)
+                self.view.layoutIfNeeded()
+            }, delayFactor: 0.2)
+
+            animator.addAnimations({
+                self.loginButton.snp.remakeConstraints { (view) in
+                    view.top.equalToSuperview().offset(100)
+                    view.size.equalTo(self.buttonSize)
+                    view.trailing.equalTo(self.view.snp.leading)
+                }
+                self.loginButton.transform = CGAffineTransform(rotationAngle: CGFloat.pi / 2.1)
+                self.view.layoutIfNeeded()
+            }, delayFactor: 0.3)
+
+            animator.addAnimations({
+                self.registerButton.snp.remakeConstraints { (view) in
+                    view.top.equalToSuperview()
+                    view.size.equalTo(self.buttonSize)
+                    view.leading.equalTo(self.view.snp.trailing)
+                }
+                self.registerButton.transform = CGAffineTransform(rotationAngle: CGFloat.pi / 0.8)
+                self.view.layoutIfNeeded()
+            }, delayFactor: 0.4)
+            
+            animator.addCompletion({ (_) in
                 let profileView = ProfileViewController()
                 self.navigationController?.pushViewController(profileView, animated: animated)
-                self.usernameTextField.text = nil
-                self.passwordTextField.text = nil
-                UIView.animate(withDuration: 0.0, delay: 0.5, options: [], animations: {
-                    self.instaCloneLogo.transform = CGAffineTransform.identity
-                }, completion: nil)
-            }
+                
+            })
+            
+            animator.startAnimation()
+            
+//            UIView.animate(withDuration: 0.5, animations: {
+//                self.instaCloneLogo.transform = CGAffineTransform(rotationAngle: CGFloat.pi / 2)
+//                self.view.layoutIfNeeded()
+//            }) { (complete) in
+//                let profileView = ProfileViewController()
+//                self.navigationController?.pushViewController(profileView, animated: animated)
+//                self.usernameTextField.text = nil
+//                self.passwordTextField.text = nil
+//                UIView.animate(withDuration: 0.0, delay: 0.5, options: [], animations: {
+//                    self.instaCloneLogo.transform = CGAffineTransform.identity
+//                }, completion: nil)
+//            }
         } else {
             let profileView = ProfileViewController()
             self.navigationController?.pushViewController(profileView, animated: animated)
@@ -214,4 +300,26 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         view.setTitle("REGISTER", for: .normal)
         return view
     }()
+}
+
+extension UIView {
+    func startRotating(duration: Double = 1) {
+        let kAnimationKey = "rotation"
+        
+        if self.layer.animation(forKey: kAnimationKey) == nil {
+            let animate = CABasicAnimation(keyPath: "transform.rotation")
+            animate.duration = duration
+            animate.repeatCount = Float.infinity
+            animate.fromValue = 0.0
+            animate.toValue = Float(M_PI * 2.0)
+            self.layer.add(animate, forKey: kAnimationKey)
+        }
+    }
+    func stopRotating() {
+        let kAnimationKey = "rotation"
+        
+        if self.layer.animation(forKey: kAnimationKey) != nil {
+            self.layer.removeAnimation(forKey: kAnimationKey)
+        }
+    }
 }

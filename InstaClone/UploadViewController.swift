@@ -116,8 +116,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     func setUpViewHierarchyAndDelegates() {
-        view.isUserInteractionEnabled = true
-        view.addGestureRecognizer(tapGestureRecognizer)        
+//        view.isUserInteractionEnabled = true
+//        view.addGestureRecognizer(tapGestureRecognizer)        
         let views = [smallPhotoCollectionView, largePhotoCollectionView]
         _ = views.map{ $0.dataSource = self }
         _ = views.map{ $0.delegate = self }

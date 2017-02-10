@@ -21,8 +21,7 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
     
     var databaseObserver: FIRDatabaseHandle?
 
-    
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         

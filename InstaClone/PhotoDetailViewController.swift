@@ -43,7 +43,7 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
         self.voteData = []
         FIRDatabase.database().reference().removeAllObservers()
     }
-    
+  
     func getPhotoActivity () {
         var voteData = [PhotoActivity]()
         let votesReference = FIRDatabase.database().reference().child("votes").child(currentPhoto.photoID)

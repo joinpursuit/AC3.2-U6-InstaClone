@@ -98,20 +98,34 @@ class Vote {
         let timeString = dateStringFormatter.string(from: date)
         
         let currentUserString = (FIRAuth.auth()?.currentUser?.uid)!
-        let photoIDString = URL(string: photoID.description())!.lastPathComponent
+        let photoIDString = photoID.key
         
-        // [START vote_vote_transaction]
-        let databaseVoteReference = FIRDatabase.database().reference().child("votes").child(photoIDString).child(currentUserString)
-        databaseVoteReference.updateChildValues(["value" : upvoted])
-        databaseVoteReference.updateChildValues(["time": timeString])
-        databaseVoteReference.updateChildValues(["date": dateString])
-        // [END vote_vote_transaction]
-        
-        // [START user_vote_transaction]
-        let userVoteReference = FIRDatabase.database().reference().child("users").child(currentUserString).child("votes").child(photoIDString)
-        userVoteReference.updateChildValues(["value" : upvoted] )
-        userVoteReference.updateChildValues(["time": timeString])
-        userVoteReference.updateChildValues(["date": dateString])
-        // [END user_vote_transaction]
+        let photoRef = FIRDatabase.database().reference().child("photos").child(photoIDString)
+        photoRef.observe(.value, with: { (snapshot) in
+            if let photoInfo = snapshot.value as? [String: String],
+                let filePath = photoInfo["filePath"] ,
+                let title = photoInfo["title "]{
+                
+                // [START vote_vote_transaction]
+                let databaseVoteReference = FIRDatabase.database().reference().child("votes").child(photoIDString).child(currentUserString)
+                databaseVoteReference.updateChildValues(["value" : upvoted])
+                databaseVoteReference.updateChildValues(["time": timeString])
+                databaseVoteReference.updateChildValues(["date": dateString])
+                databaseVoteReference.updateChildValues(["imageName" : title])
+                databaseVoteReference.updateChildValues(["filePath" : filePath])
+                // [END vote_vote_transaction]
+                
+                
+                
+                // [START user_vote_transaction]
+                let userVoteReference = FIRDatabase.database().reference().child("users").child(currentUserString).child("votes").child(photoIDString)
+                userVoteReference.updateChildValues(["value" : upvoted])
+                userVoteReference.updateChildValues(["time" : timeString])
+                userVoteReference.updateChildValues(["date" : dateString])
+                userVoteReference.updateChildValues(["imageName" : title])
+                userVoteReference.updateChildValues(["filePath" : filePath])
+                // [END user_vote_transaction]
+            }
+        })
     }
 }

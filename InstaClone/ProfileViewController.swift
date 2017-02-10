@@ -114,8 +114,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                 var voteActivity = [[String: AnyObject]]()
 
                 while let vote = votes.nextObject() as? FIRDataSnapshot,
-                    let voteDict = vote.value as? [String: AnyObject] {
+                    var voteDict = vote.value as? [String: AnyObject] {
 
+                        let voteID = vote.key
+                        voteDict["photoID"] = voteID as AnyObject?
                         voteActivity.append(voteDict)
                         
                         if voteActivity.count == Int(votesSnapshot.childrenCount) {
@@ -124,7 +126,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                         }
                         
                         if allVotes && allPhotos {
-                            self.activities = userActivity
+                            self.activities = userActivity.filter { $0.keys.count > 2 }
+                            print("--------------- \n\n USER ACTIVITY")
+                            dump(self.activities)
                             self.feedTableView.reloadData()
                         }
                 }
@@ -134,8 +138,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                 let photos = photosSnapshot.children
                 var photoActivity = [[String: AnyObject]]()
                 while let photo = photos.nextObject() as? FIRDataSnapshot,
-                    let photoDict = photo.value as? [String: AnyObject] {
-                        
+                    var photoDict = photo.value as? [String: AnyObject] {
+                        let photoID = photo.key
+                        photoDict["photoID"] = photoID as AnyObject?
                         photoActivity.append(photoDict)
                         if photoActivity.count == Int(photosSnapshot.childrenCount) {
                             userActivity += photoActivity
@@ -143,7 +148,11 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                         }
                         
                         if allVotes && allPhotos {
-                            self.activities = userActivity
+                            self.activities = userActivity.filter { $0.keys.count > 2 }
+                            print("--------------- \n\n USER ACTIVITY2")
+                            dump(self.activities)
+
+                            self.activities = userActivity.filter { $0.keys.count > 2 }
                             self.feedTableView.reloadData()
                         }
                 }
@@ -228,12 +237,38 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         let cell = tableView.dequeueReusableCell(withIdentifier: ProfileViewController.activityFeedCellIdentifyer, for: indexPath) as! ActivityFeedTableViewCell
         
         let currentActivity = self.activities[indexPath.row]
-        //print(currentActivity)
         
-        //if let currentActivity[""]
-        //cell.activityTextLabel =
+        cell.backgroundColor = UIColor.instaPrimaryLight()
         cell.profileImageView.image = #imageLiteral(resourceName: "user_icon")
         cell.activityDateLabel.text = currentActivity["time"] as? String
+ 
+        if let photoID = currentActivity["photoID"] as? String, let category = currentActivity["category"] as? String {
+            _ = databasePhotosReference.child("\(category)/\(photoID)").observe(.value, with: { (snapshot) in
+                if let thisPhotoDict = snapshot.value as? NSDictionary {
+                    let thisPhotoTitle = thisPhotoDict["title"] as! String
+                    let thisPhotoFilePath = thisPhotoDict["filePath"] as! String
+                    
+                    cell.activityTextLabel.text = "You uploaded \(thisPhotoTitle) "
+                    
+                    let imageRef = self.storageReference.child(thisPhotoFilePath)
+                    imageRef.data(withMaxSize: 10 * 1024 * 1024, completion: { (data: Data?, error: Error?) in
+                        if error != nil {
+                            print("Error \(error)")
+                        }
+                        if let validData = data {
+                            cell.profileImageView.image = UIImage(data: validData)
+                            cell.setNeedsLayout()
+                        }
+                    })
+                }
+            })
+        }
+        
+        if let photoID = currentActivity["photoID"] as? String, let voteBool = currentActivity["value"] as? Bool {
+            let direction = voteBool ? "up" : "down"
+            cell.activityTextLabel.text = "You voted \(photoID) \(direction)"
+        }
+        
         return cell
     }
     

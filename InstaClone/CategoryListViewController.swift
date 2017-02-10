@@ -134,7 +134,7 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
         let view = UILabel()
         view.backgroundColor = UIColor.instaPrimary()
         view.textColor = UIColor.instaAccent()
-        view.text = "YOU HAVE NO UPLOADED PHOTOS"
+        view.text = "THERE ARE NO PHOTOS UPLOADED FOR THIS CATEGORY"
         view.textAlignment = .center
         view.isHidden = true
         return view

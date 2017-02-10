@@ -18,6 +18,8 @@ class CategoryListCollectionViewCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        self.layer.borderWidth = 1.0
+        self.layer.borderColor = UIColor.instaDivider().cgColor
         
         setupViewHierarchy()
     }

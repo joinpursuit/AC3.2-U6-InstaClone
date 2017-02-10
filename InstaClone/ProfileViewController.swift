@@ -228,8 +228,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         let cell = tableView.dequeueReusableCell(withIdentifier: ProfileViewController.activityFeedCellIdentifyer, for: indexPath) as! ActivityFeedTableViewCell
         
         let currentActivity = self.activities[indexPath.row]
-        print(currentActivity)
+        //print(currentActivity)
         
+        //if let currentActivity[""]
+        //cell.activityTextLabel =
         cell.profileImageView.image = #imageLiteral(resourceName: "user_icon")
         cell.activityDateLabel.text = currentActivity["time"] as? String
         return cell

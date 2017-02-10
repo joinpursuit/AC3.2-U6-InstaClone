@@ -44,23 +44,6 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
         FIRDatabase.database().reference().removeAllObservers()
     }
     
-    func loadCurrentImage() {
-        navigationItem.title = currentPhoto.title
-        
-        upCountLabel.text = String(currentPhoto.upCount)
-        downCountLabel.text = String(currentPhoto.downCount)
-        
-        let imageRef = self.storageReference.child(currentPhoto.filePath)
-        imageRef.data(withMaxSize: 10 * 1024 * 1024, completion: { (data: Data?, error: Error?) in
-            if error != nil {
-                print("Error \(error)")
-            }
-            if let validData = data {
-                self.imageView.image = UIImage(data: validData)
-            }
-        })
-    }
-    
     func getPhotoActivity () {
         var voteData = [PhotoActivity]()
         let votesReference = FIRDatabase.database().reference().child("votes").child(currentPhoto.photoID)

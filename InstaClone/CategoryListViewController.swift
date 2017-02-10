@@ -21,7 +21,6 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
     
     var databaseObserver: FIRDatabaseHandle?
 
-
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -30,8 +29,6 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
         getImages()
         //setObserver()
     }
-    
-    
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -82,6 +79,7 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
 //        })
 //    }
 
+    
     
     //MARK: - Collection View Delegate
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

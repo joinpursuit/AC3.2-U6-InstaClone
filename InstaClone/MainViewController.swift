@@ -137,7 +137,7 @@ class MainViewController: UIViewController, UICollectionViewDelegate, UICollecti
         layout.minimumLineSpacing = 0
         
         let cView = UICollectionView(frame: self.view.frame, collectionViewLayout: layout)
-        cView.backgroundColor = .white
+        cView.backgroundColor = UIColor.instaPrimary()
         cView.delegate = self
         cView.dataSource = self
         return cView

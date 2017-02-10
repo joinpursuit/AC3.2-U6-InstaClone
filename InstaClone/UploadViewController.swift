@@ -33,7 +33,6 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     var uploadType: UploadType = .category
     
     override func viewDidLoad() {
-        view.backgroundColor = UIColor.instaPrimaryLight()
         super.viewDidLoad()
         self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
         view.backgroundColor = UIColor.instaPrimary()
@@ -68,6 +67,10 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     func setUpNavigationItems() {
+        self.navigationController?.navigationBar.tintColor = UIColor.instaAccent()
+        self.navigationItem.hidesBackButton = true
+        let newBackButton = UIBarButtonItem(title: "CANCEL", style: UIBarButtonItemStyle.plain, target: self, action: #selector(navBack))
+        self.navigationItem.leftBarButtonItem = newBackButton
         self.navigationItem.title = "UPLOAD"
         let button: UIButton = UIButton()
         button.setImage(UIImage(named: "up_arrow"), for: .normal)
@@ -75,6 +78,11 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         button.addTarget(self, action: #selector(didPressUploadButton), for: .touchUpInside)
         self.navigationItem.setRightBarButton(UIBarButtonItem(customView: button), animated: true)
     }
+    
+    func navBack() {
+        _ = navigationController?.popViewController(animated: true)
+    }
+
     
     func setUpOverlay () {
         self.view.addSubview(overlayView)
@@ -326,6 +334,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         case .category:
             print("completed category upload")
         // needs to switch screen to that category's photo feed
+            
+            self.tabBarController?.selectedIndex = 0
         case .profile:
             if let profileVC = navigationController?.viewControllers[1] as? ProfileViewController {
                 profileVC.profileImageView.image = image

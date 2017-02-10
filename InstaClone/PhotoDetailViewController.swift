@@ -91,6 +91,8 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
     }
     
     func setupViewHierarchy(){
+        self.navigationController?.navigationBar.tintColor = UIColor.instaAccent()
+        navigationItem.title = currentPhoto.title
         activitiesTableView.register(ActivityFeedTableViewCell.self, forCellReuseIdentifier: ProfileViewController.activityFeedCellIdentifyer)
         
         self.view.addSubview(imageView)
@@ -141,6 +143,21 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
     
     
     // MARK: - Vote observer
+    
+    func loadCurrentImage() {
+        upCountLabel.text = String(currentPhoto.upCount)
+        downCountLabel.text = String(currentPhoto.downCount)
+        
+        let imageRef = self.storageReference.child(currentPhoto.filePath)
+        imageRef.data(withMaxSize: 10 * 1024 * 1024, completion: { (data: Data?, error: Error?) in
+            if error != nil {
+                print("Error \(error)")
+            }
+            if let validData = data {
+                self.imageView.image = UIImage(data: validData)
+            }
+        })
+    }
     
     private func setObserver() {
         databaseObserver = databaseReference.observe(.childChanged, with: { (snapshot: FIRDataSnapshot) in

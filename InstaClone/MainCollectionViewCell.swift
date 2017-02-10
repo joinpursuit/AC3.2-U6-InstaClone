@@ -24,6 +24,7 @@ class MainCollectionViewCell: UICollectionViewCell {
     }
     
     override func prepareForReuse() {
+        
         categoryLabel.layer.borderWidth = 2.0
         categoryLabel.snp.remakeConstraints { (view) in
             view.width.equalToSuperview().multipliedBy(0.6)

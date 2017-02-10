@@ -40,8 +40,6 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
         //setObserver()
     }
     
-    
-    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
@@ -134,6 +132,7 @@ class CategoryListViewController: UIViewController, UICollectionViewDelegate, UI
 //        })
 //    }
 
+    
     
     //MARK: - Collection View Delegate
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

@@ -47,7 +47,6 @@ class Vote {
     
     static func actualVote(for photoID: FIRDatabaseReference, upvoted: Bool, switched: Bool) {
         // [START photo_vote_transaction]
-//        var category = ""
         var category = photoID.parent?.key
         photoID.runTransactionBlock({ (currentData: FIRMutableData) -> FIRTransactionResult in
             if var data = currentData.value as? [String: AnyObject],
@@ -80,12 +79,6 @@ class Vote {
                 votes["downvotes"] = downvotes
                 data["votes"] = votes as AnyObject?
                 currentData.value = data
-                
-                
-                
-                
-                
-                
                 return FIRTransactionResult.success(withValue: currentData)
             } else {
                 print("you failed at life")
@@ -105,12 +98,10 @@ class Vote {
         let dateString = dateStringFormatter.string(from: date)
         dateStringFormatter.dateFormat = "HH:mm:ss"
         let timeString = dateStringFormatter.string(from: date)
-
+        
         let currentUserString = (FIRAuth.auth()?.currentUser?.uid)!
         let photoIDString = photoID.key
-        
-        let photoRef = FIRDatabase.database().reference().child("photos").child(category!).child(photoIDString)
-        photoRef.observe(.value, with: { (snapshot) in
+        photoID.observeSingleEvent(of: .value, with: { (snapshot) in
             if let photoInfo = snapshot.value as? [String: AnyObject],
                 let filePath = photoInfo["filePath"] as? String,
                 let title = photoInfo["title"] as? String{

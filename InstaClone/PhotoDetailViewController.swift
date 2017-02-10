@@ -12,21 +12,32 @@ import Firebase
 
 class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
-    let storageReference = FIRStorage.storage().reference()
     
     var currentPhoto: Photo!
+    
+    var databaseReference: FIRDatabaseReference!
+    
+    let storageReference = FIRStorage.storage().reference()
+    
+    var databaseObserver: FIRDatabaseHandle?
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        databaseReference = FIRDatabase.database().reference().child("photos").child(currentPhoto.category).child(currentPhoto.photoID)
         
         setupViewHierarchy()
         configureConstraints()
-        
         loadCurrentImage()
+        setObserver()
     }
     
     func loadCurrentImage() {
         navigationItem.title = currentPhoto.title
+        
+        upCountLabel.text = String(currentPhoto.upCount)
+        downCountLabel.text = String(currentPhoto.downCount)
+        
         let imageRef = self.storageReference.child(currentPhoto.filePath)
         imageRef.data(withMaxSize: 10 * 1024 * 1024, completion: { (data: Data?, error: Error?) in
             if error != nil {
@@ -88,26 +99,51 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
     }
     
     
+    // MARK: - Vote observer
+    
+    private func setObserver() {
+        databaseObserver = databaseReference.observe(.childChanged, with: { (snapshot: FIRDataSnapshot) in
+            if let voteDict = snapshot.value as? NSDictionary {
+                let up = voteDict["upvotes"] as! Int
+                let down = voteDict["downvotes"] as! Int
+                self.upCountLabel.text = String(up)
+                self.downCountLabel.text = String(down)
+                self.currentPhoto.upCount = up
+                self.currentPhoto.downCount = down
+            }
+        })
+    }
+    
+    
     // MARK: - Actions
     
     func didPressUpVoteButton() {
-        print("UP")
-        let ref = FIRDatabase.database().reference().child("photos").child(currentPhoto.category).child(currentPhoto.photoID)
-        Vote.voted(for: ref, upvoted: true)
-//        placeVote(voteType: "upvotes", startingValue: currentPhoto.upCount)
+        Vote.voted(for: databaseReference, upvoted: true)
+        animateButton(sender: upVoteButton)
     }
     
     func didPressDownVoteButton() {
-        print("down")
-//        placeVote(voteType: "downvotes", startingValue: currentPhoto.downCount)
+        Vote.voted(for: databaseReference, upvoted: false)
+        animateButton(sender: downVoteButton)
     }
     
-    func placeVote(voteType: String, startingValue: Int) {
-        // update the upCount in the photos database
-        let voteDictDatabaseReference = FIRDatabase.database().reference().child("photos").child(currentPhoto.category).child(currentPhoto.photoID).child("votes")
-        voteDictDatabaseReference.updateChildValues([voteType : startingValue + 1])
-
+    internal func animateButton(sender: UIButton) {
+        let newTransform = CGAffineTransform(scaleX: 0.8, y: 0.8)
+        let originalTransform = sender.imageView!.transform
+        UIView.animate(withDuration: 0.05, animations: {
+            sender.layer.transform = CATransform3DMakeAffineTransform(newTransform)
+        }, completion: { (complete) in
+            sender.layer.transform = CATransform3DMakeAffineTransform(originalTransform)
+        })
     }
+
+    
+//    func placeVote(voteType: String, startingValue: Int) {
+//        // update the upCount in the photos database
+//        let voteDictDatabaseReference = FIRDatabase.database().reference().child("photos").child(currentPhoto.category).child(currentPhoto.photoID).child("votes")
+//        voteDictDatabaseReference.updateChildValues([voteType : startingValue + 1])
+//
+//    }
     
     //MARK: - Table View Delegate
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -137,7 +173,7 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
         label.backgroundColor = UIColor.instaPrimaryDark()
         label.textColor = UIColor.instaAccent()
         label.textAlignment = .center
-        label.text = "328"
+        label.text = "0"
         return label
     }()
     
@@ -147,7 +183,7 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
         label.backgroundColor = UIColor.instaPrimaryDark()
         label.textColor = UIColor.instaAccent()
         label.textAlignment = .center
-        label.text = "10"
+        label.text = "0"
         return label
     }()
     

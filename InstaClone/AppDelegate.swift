@@ -45,6 +45,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let loginIcon = UITabBarItem(title: "", image: UIImage(named: "user_icon"), selectedImage: UIImage(named: "user_icon"))
         let uploadIcon = UITabBarItem(title: "", image: UIImage(named: "camera_icon"), selectedImage: UIImage(named: "camera_icon"))
         let mainIcon = UITabBarItem(title: "", image: UIImage(named: "gallery_icon"), selectedImage: UIImage(named: "gallery_icon"))
+        uploadIcon.imageInsets = UIEdgeInsets(top: 6, left: 0, bottom: -6, right: 0)
+        loginIcon.imageInsets = UIEdgeInsets(top: 4, left: 0, bottom: -4, right: 0)
         loginViewController.tabBarItem = loginIcon
         uploadViewController.tabBarItem = uploadIcon
         mainViewController.tabBarItem = mainIcon

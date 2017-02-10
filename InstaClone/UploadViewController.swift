@@ -116,6 +116,8 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     func setUpViewHierarchyAndDelegates() {
+        view.isUserInteractionEnabled = true
+        view.addGestureRecognizer(tapGestureRecognizer)        
         let views = [smallPhotoCollectionView, largePhotoCollectionView]
         _ = views.map{ $0.dataSource = self }
         _ = views.map{ $0.delegate = self }
@@ -344,6 +346,19 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         }
     }
     
+    // MARK: - TEXTFIELD DELEGATE FUNCTIONS
+    
+    func viewWasTapped() {
+        print("tap")
+        self.view.endEditing(true)
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return false
+    }
+    
+    
     //MARK: - Views
     
     var smallPhotoCollectionView: PickerCollectionView = {
@@ -410,6 +425,12 @@ class UploadViewController: UIViewController, UICollectionViewDelegate, UICollec
         view.progressTintColor = UIColor.instaAccent()
         return view
     }()
+    
+    lazy var tapGestureRecognizer: UITapGestureRecognizer = {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(self.viewWasTapped))
+        return tap
+    }()
+
     
     //MARK: - Animations
     

@@ -32,7 +32,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         setNavigationBar()
         getCurrentUser()
         getUserAction()
-        print(activities)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -228,6 +227,11 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         })
     }
     
+//    func sortChronologically(arr: [[String: AnyObject]]) -> [[String: AnyObject]] {
+//        
+//        return arr.sorted(by: <#T##([String : AnyObject], [String : AnyObject]) -> Bool#>)
+//    }
+    
     // MARK: - TABLEVIEW DATA SOURCE METHODS
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -241,7 +245,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         cell.backgroundColor = UIColor.instaPrimaryLight()
         cell.profileImageView.image = #imageLiteral(resourceName: "user_icon")
-        cell.activityDateLabel.text = currentActivity["time"] as? String
+        
+        if let time = currentActivity["time"] as? String, let date = currentActivity["date"] as? String {
+            cell.activityDateLabel.text = "at \(time) on \(date)"
+        }
         
         var thisPhotoFilePath = ""
  
@@ -266,8 +273,10 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             })
         }
         
+        
+        
         if let voteBool = currentActivity["value"] as? Bool,
-            let title = currentActivity["title"] as? String,
+            let title = currentActivity["imageName"] as? String,
             let photoFilePath = currentActivity["filePath"] as? String {
             thisPhotoFilePath = photoFilePath
             

@@ -20,7 +20,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     let buttonSize: CGSize = CGSize(width: 280, height: 60)
     
     static let myFont = UIFont.systemFont(ofSize: 16)
-
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -31,13 +33,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         setUpViewHeirachy()
         setConstraints()
         setTextFieldDelegate()
+        
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         instaCloneLogo.startRotating(duration: 4)
-        
-//        self.usernameTextField.text = nil
-//        self.passwordTextField.text = nil
         
         UIView.animate(withDuration: 0.0, animations: {
             self.usernameTextField.transform = CGAffineTransform.identity
@@ -71,6 +72,9 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     func setTextFieldDelegate() {
         passwordTextField.delegate = self
         usernameTextField.delegate = self
+        view.isUserInteractionEnabled = true
+        view.addGestureRecognizer(tapGestureRecognizer)
+
     }
     
     func setUpViewHeirachy() {
@@ -116,6 +120,23 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
             view.bottom.equalTo(self.view.snp.bottom).offset(-20)
         }
     }
+    
+    
+    // MARK: - TEXTFIELD DELEGATE FUNCTIONS
+    
+    func viewWasTapped() {
+        print("tap")
+        self.view.endEditing(true)
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == passwordTextField {
+            self.view.endEditing(true)
+            return false
+        }
+        return true
+    }
+    
     
     
     // MARK: TARGET ACTION METHODS
@@ -286,6 +307,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         let view = UnderlineTextField()
         view.backgroundColor = .clear
         view.attributedPlaceholder = NSAttributedString(string: " PASSWORD", attributes: [NSForegroundColorAttributeName: UIColor.instaAccent(), NSFontAttributeName: myFont])
+        view.isSecureTextEntry = true
         return view
     }()
     
@@ -300,6 +322,12 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
         view.setTitle("REGISTER", for: .normal)
         return view
     }()
+    
+    lazy var tapGestureRecognizer: UITapGestureRecognizer = {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(self.viewWasTapped))
+        return tap
+    }()
+    
 }
 
 extension UIView {

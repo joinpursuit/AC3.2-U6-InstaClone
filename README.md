@@ -84,6 +84,8 @@ The backend of the app is implmented in Firebase.
 * Structured data such as the pre-set list of categories, up- and down- votes use Firebase's _Database_
 * Images are uploaded to Firebase's _Storage_
 
+THIS IS MAGIC.
+
 ### Categories
 
 For this MVP version of the app categories are defined and entered by an administrator 
@@ -96,8 +98,7 @@ is not a current requirement.)
 
 ### Authentication
 
-Registration and Login are reached from the same screen. Login is required in order to enter
-any part of the app and so this screen is presented when the user is not logged in.
+Registration and Login are reached from the same screen. Login is required in order to interact with voting and uploading.
 
 ### Profile
 

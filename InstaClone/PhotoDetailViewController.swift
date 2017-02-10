@@ -20,8 +20,9 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
     let storageReference = FIRStorage.storage().reference()
     
     var databaseObserver: FIRDatabaseHandle?
-
-
+    
+    var voteData = [PhotoActivity]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         databaseReference = FIRDatabase.database().reference().child("photos").child(currentPhoto.category).child(currentPhoto.photoID)
@@ -30,6 +31,17 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
         configureConstraints()
         loadCurrentImage()
         setObserver()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.getPhotoActivity()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        self.voteData = []
+        FIRDatabase.database().reference().removeAllObservers()
     }
     
     func loadCurrentImage() {
@@ -45,6 +57,35 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
             }
             if let validData = data {
                 self.imageView.image = UIImage(data: validData)
+            }
+        })
+    }
+    
+    func getPhotoActivity () {
+        var voteData = [PhotoActivity]()
+        let votesReference = FIRDatabase.database().reference().child("votes").child(currentPhoto.photoID)
+        votesReference.observe(.value, with: { (photoVotesSnapshot) in
+            let votes = photoVotesSnapshot.children
+            while let vote = votes.nextObject() as? FIRDataSnapshot,
+                var voteInfo = vote.value as? [String: AnyObject] {
+                    
+                    let userReference = FIRDatabase.database().reference().child("users").child(vote.key).child("username")
+                    userReference.observe(.value, with: { (userSnapshot) in
+                        
+                        if let username = userSnapshot.value as? String {
+                            voteInfo["username"] = username as AnyObject
+                            voteInfo["userID"] = vote.key as AnyObject
+                            print("working to this point")
+                            if let voteObject = PhotoActivity(voteInfo) {
+                                print(vote)
+                                voteData.append(voteObject)
+                            }
+                            if voteData.count == Int(photoVotesSnapshot.childrenCount) {
+                                self.voteData = voteData
+                                self.activitiesTableView.reloadData()
+                            }
+                        }
+                    })
             }
         })
     }
@@ -136,26 +177,40 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
             sender.layer.transform = CATransform3DMakeAffineTransform(originalTransform)
         })
     }
-
     
-//    func placeVote(voteType: String, startingValue: Int) {
-//        // update the upCount in the photos database
-//        let voteDictDatabaseReference = FIRDatabase.database().reference().child("photos").child(currentPhoto.category).child(currentPhoto.photoID).child("votes")
-//        voteDictDatabaseReference.updateChildValues([voteType : startingValue + 1])
-//
-//    }
     
     //MARK: - Table View Delegate
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 20
+        return self.voteData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ProfileViewController.activityFeedCellIdentifyer, for: indexPath) as! ActivityFeedTableViewCell
         
+        cell.backgroundColor = UIColor.instaPrimaryLight()
+        let currentVote = self.voteData[indexPath.row]
+        let voteValueText = currentVote.value ? "up" : "down"
+        
+        let userRef = FIRDatabase.database().reference().child("users").child(currentVote.userID).child("profilePic")
+        userRef.observe(.value, with: { (snapshot) in
+            if let userDict = snapshot.value as? NSDictionary,
+                let profilePicFilePath = userDict["filePath"] as? String {
+                let imageRef = self.storageReference.child(profilePicFilePath)
+                imageRef.data(withMaxSize: 10 * 1024 * 1024, completion: { (data: Data?, error: Error?) in
+                    if error != nil {
+                        print("Error \(error)")
+                    }
+                    if let validData = data {
+                        cell.profileImageView.image = UIImage(data: validData)
+                        cell.layoutIfNeeded()
+                    }
+                })
+            }
+        })
+        
         cell.profileImageView.image = #imageLiteral(resourceName: "user_icon")
-        cell.activityTextLabel.text = "👍🏻👍🏼👍🏽👍🏾👍🏿"
-        cell.activityDateLabel.text = "11:30PM"
+        cell.activityTextLabel.text = "\(currentVote.username) voted \(voteValueText)"
+        cell.activityDateLabel.text = "at \(currentVote.time) on \(currentVote.date)"
         return cell
     }
     

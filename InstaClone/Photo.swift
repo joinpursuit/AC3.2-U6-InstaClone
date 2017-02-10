@@ -88,10 +88,11 @@ class Photo {
             voteRef.updateChildValues(initalVoteCount)
             
             // adding the photo ID to user's photo bucket
-            let userPhotoDirectory = databaseUserReference.child(FIRAuth.auth()!.currentUser!.uid).child("photos")
-            let directoryAsURL = URL(string: photoRef.description())!
+            let userPhotoDirectory = databaseUserReference.child(FIRAuth.auth()!.currentUser!.uid).child("photos").child(photoRef.key)
             let userPhotoDetail : [String : AnyObject ] = [
-                directoryAsURL.lastPathComponent : category as AnyObject
+                "category" : category as AnyObject,
+                "time" : uploadedPhoto.time as AnyObject,
+                "date" : uploadedPhoto.date as AnyObject
             ]
             userPhotoDirectory.updateChildValues(userPhotoDetail)
             

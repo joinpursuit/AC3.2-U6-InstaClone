@@ -18,7 +18,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     let storageReference = FIRStorage.storage().reference()
     
     var userImages: [Photo] = []
-    var currentUserID: String?
     
     static let activityFeedCellIdentifyer: String = "activityFeedCell"
     static let myFont = UIFont.systemFont(ofSize: 16)
@@ -68,36 +67,42 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func getUploadedImagePaths() {
         if let currentUserID = FIRAuth.auth()?.currentUser?.uid {
-            self.currentUserID = currentUserID
-            databaseUsersReference.child(currentUserID).child("photos").observe(.value, with: { (snapshot) in
-                if let allUserPhotos = snapshot.value as? NSDictionary {
-                    let userImageIDs = allUserPhotos.allKeys as! [String]
-                    var userPhotos: [Photo] = []
-                    for photoID in userImageIDs {
-                        guard let category = allUserPhotos[photoID] as? String else { continue }
+            let userPhotosReference = databaseUsersReference.child(currentUserID).child("photos")
+            userPhotosReference.observe(.value, with: { (snapshot) in
+                let allUserPhotos = snapshot.children
+                    while let photoSnapshot = allUserPhotos.nextObject() as? FIRDataSnapshot,
+                        let photoDict = photoSnapshot.value as? NSDictionary {
+                        guard let category = photoDict["category"] as? String else { continue }
+                            let photoID = photoSnapshot.key
                         let path = category + "/" + photoID
-                        self.databasePhotosReference.child(path).observe(.value, with: { (snapshot) in
-                            if let photoDictionary = snapshot.value as? NSDictionary {
-                                if let photo = Photo(dict: photoDictionary, photoID: photoID) {
-                                    print("photo created")
-                                    userPhotos.append(photo)
+                        self.databasePhotosReference.child(path).observe(.value, with: { (photoInfoSnapshot) in
+                            if let photoDictionary = photoInfoSnapshot.value as? NSDictionary,
+                                let photo = Photo(dict: photoDictionary, photoID: photoID) {
+                                print("photo created")
+                                self.userImages.append(photo)
+                                print(snapshot.childrenCount)
+                                if self.userImages.count == Int(snapshot.childrenCount) {
+                                    print("reloading data")
                                     self.uploadedPhotosCollectionView.reloadData()
-                                    if userPhotos.count == userImageIDs.count {
-                                        self.userImages = userPhotos
-                                        dump(userPhotos)
-                                        self.uploadedPhotosCollectionView.reloadData()
-                                    }
-                                } else {
-                                    print("\(photoID) couldn't be parsed")
                                 }
+                            } else {
+                                print("\(photoID) couldn't be parsed")
                             }
                         })
-                    }
                 }
             })
         }
     }
-    
+    /*
+    func getUserAction () {
+        if let currentUserID = FIRAuth.auth()?.currentUser?.uid {
+            let userRef = databaseUsersReference.child(currentUserID)
+            userRef.observe(.value, with: { (snapshot) in
+                <#code#>
+            })
+        }
+    }
+    */
     func setNavigationBar() {
         self.navigationItem.hidesBackButton = true
         let logoutButton = UIBarButtonItem(title: "LOGOUT", style: UIBarButtonItemStyle.plain, target: self, action: #selector(logoutTapped))
@@ -183,6 +188,12 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         }
         
         return smallPhotoCell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let photoDetailVC = PhotoDetailViewController()
+        photoDetailVC.currentPhoto = userImages[indexPath.item]
+        _ = navigationController?.pushViewController(photoDetailVC, animated: true)
     }
     
     // MARK: - TARGET ACTION METHODS

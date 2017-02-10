@@ -8,14 +8,34 @@
 
 import UIKit
 import SnapKit
+import Firebase
 
 class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+    
+    let storageReference = FIRStorage.storage().reference()
+    
+    var currentPhoto: Photo!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupViewHierarchy()
         configureConstraints()
+        
+        loadCurrentImage()
+    }
+    
+    func loadCurrentImage() {
+        navigationItem.title = currentPhoto.title
+        let imageRef = self.storageReference.child(currentPhoto.filePath)
+        imageRef.data(withMaxSize: 10 * 1024 * 1024, completion: { (data: Data?, error: Error?) in
+            if error != nil {
+                print("Error \(error)")
+            }
+            if let validData = data {
+                self.imageView.image = UIImage(data: validData)
+            }
+        })
     }
     
     func setupViewHierarchy(){
@@ -25,8 +45,8 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
         self.view.addSubview(upCountLabel)
         self.view.addSubview(downCountLabel)
         self.view.addSubview(activitiesTableView)
-        imageView.addSubview(upVoteImage)
-        imageView.addSubview(downVoteImage)
+        self.view.addSubview(upVoteButton)
+        self.view.addSubview(downVoteButton)
     }
     
     func configureConstraints(){
@@ -52,17 +72,41 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
             view.top.equalTo(upCountLabel.snp.bottom)
         }
         
-        upVoteImage.snp.makeConstraints { (view) in
-            view.leading.bottom.equalToSuperview()
-            view.height.equalToSuperview().multipliedBy(0.15)
+        upVoteButton.snp.makeConstraints { (view) in
+            view.bottom.equalTo(upCountLabel.snp.top)
+            view.leading.equalToSuperview()
+            view.height.equalTo(imageView).multipliedBy(0.15)
             view.width.equalToSuperview().multipliedBy(0.50)
         }
         
-        downVoteImage.snp.makeConstraints { (view) in
-            view.bottom.trailing.equalToSuperview()
-            view.height.equalTo(upVoteImage.snp.height)
-            view.leading.equalTo(upVoteImage.snp.trailing)
+        downVoteButton.snp.makeConstraints { (view) in
+            view.bottom.equalTo(downCountLabel.snp.top)
+            view.trailing.equalToSuperview()
+            view.height.equalTo(upVoteButton.snp.height)
+            view.leading.equalTo(upVoteButton.snp.trailing)
         }
+    }
+    
+    
+    // MARK: - Actions
+    
+    func didPressUpVoteButton() {
+        print("UP")
+        let ref = FIRDatabase.database().reference().child("photos").child(currentPhoto.category).child(currentPhoto.photoID)
+        Vote.voted(for: ref, upvoted: true)
+//        placeVote(voteType: "upvotes", startingValue: currentPhoto.upCount)
+    }
+    
+    func didPressDownVoteButton() {
+        print("down")
+//        placeVote(voteType: "downvotes", startingValue: currentPhoto.downCount)
+    }
+    
+    func placeVote(voteType: String, startingValue: Int) {
+        // update the upCount in the photos database
+        let voteDictDatabaseReference = FIRDatabase.database().reference().child("photos").child(currentPhoto.category).child(currentPhoto.photoID).child("votes")
+        voteDictDatabaseReference.updateChildValues([voteType : startingValue + 1])
+
     }
     
     //MARK: - Table View Delegate
@@ -114,21 +158,25 @@ class PhotoDetailViewController: UIViewController, UITableViewDataSource, UITabl
         return view
     }()
     
-    lazy var upVoteImage: UIImageView = {
-        let image = UIImageView()
-        image.image = UIImage(named: "up_arrow")
-        image.backgroundColor = UIColor.instaPrimary()
-        image.alpha = 0.7
-        image.contentMode = .center
-        return image
+    lazy var upVoteButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "up_arrow"), for: .normal)
+        button.addTarget(self, action: #selector(didPressUpVoteButton), for: .touchUpInside)
+        button.backgroundColor = UIColor.instaPrimary()
+        button.alpha = 0.7
+        button.contentMode = .center
+        button.isEnabled = true
+        return button
     }()
     
-    lazy var downVoteImage: UIImageView = {
-        let image = UIImageView()
-        image.image = UIImage(named: "down_arrow")
-        image.backgroundColor = UIColor.instaPrimary()
-        image.alpha = 0.7
-        image.contentMode = .center
-        return image
+    lazy var downVoteButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "down_arrow"), for: .normal)
+        button.addTarget(self, action: #selector(didPressDownVoteButton), for: .touchUpInside)
+        button.backgroundColor = UIColor.instaPrimary()
+        button.alpha = 0.7
+        button.contentMode = .center
+        button.isEnabled = true
+        return button
     }()
 }

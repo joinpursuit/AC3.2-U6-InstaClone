@@ -32,6 +32,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         setNavigationBar()
         getCurrentUser()
         getUserAction()
+        print(activities)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -173,9 +174,9 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
         self.view.addSubview(yourUploadsLabel)
         self.view.addSubview(feedTableView)
-        self.view.addSubview(profileImageView)
         self.view.addSubview(uploadedPhotosCollectionView)
         self.view.addSubview(noPhotosLabel)
+        self.view.addSubview(profileImageView)
         
         uploadedPhotosCollectionView.dataSource = self
         uploadedPhotosCollectionView.delegate = self
@@ -241,15 +242,16 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.backgroundColor = UIColor.instaPrimaryLight()
         cell.profileImageView.image = #imageLiteral(resourceName: "user_icon")
         cell.activityDateLabel.text = currentActivity["time"] as? String
+        
+        var thisPhotoFilePath = ""
  
         if let photoID = currentActivity["photoID"] as? String, let category = currentActivity["category"] as? String {
             _ = databasePhotosReference.child("\(category)/\(photoID)").observe(.value, with: { (snapshot) in
                 if let thisPhotoDict = snapshot.value as? NSDictionary {
                     let thisPhotoTitle = thisPhotoDict["title"] as! String
-                    let thisPhotoFilePath = thisPhotoDict["filePath"] as! String
+                    thisPhotoFilePath = thisPhotoDict["filePath"] as! String
                     
                     cell.activityTextLabel.text = "You uploaded \(thisPhotoTitle) "
-                    
                     let imageRef = self.storageReference.child(thisPhotoFilePath)
                     imageRef.data(withMaxSize: 10 * 1024 * 1024, completion: { (data: Data?, error: Error?) in
                         if error != nil {
@@ -264,10 +266,25 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             })
         }
         
-        if let photoID = currentActivity["photoID"] as? String, let voteBool = currentActivity["value"] as? Bool {
+        if let voteBool = currentActivity["value"] as? Bool,
+            let title = currentActivity["title"] as? String,
+            let photoFilePath = currentActivity["filePath"] as? String {
+            thisPhotoFilePath = photoFilePath
+            
             let direction = voteBool ? "up" : "down"
-            cell.activityTextLabel.text = "You voted \(photoID) \(direction)"
+            cell.activityTextLabel.text = "You voted \(title) \(direction)"
+            let imageRef = self.storageReference.child(thisPhotoFilePath)
+            imageRef.data(withMaxSize: 10 * 1024 * 1024, completion: { (data: Data?, error: Error?) in
+                if error != nil {
+                    print("Error \(error)")
+                }
+                if let validData = data {
+                    cell.profileImageView.image = UIImage(data: validData)
+                    cell.setNeedsLayout()
+                }
+            })
         }
+        
         
         return cell
     }

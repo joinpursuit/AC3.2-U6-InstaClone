@@ -58,7 +58,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                             print("Error \(error)")
                         }
                         if let validData = data {
-                            self.profileImageView.image = UIImage(data: validData)
+                            self.setNewImageWithFade(imageData: validData)
                         }
                     })
                 }
@@ -67,9 +67,17 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func getUploadedImagePaths() {
+        print("WTF")
         if let currentUserID = FIRAuth.auth()?.currentUser?.uid {
             let userPhotosReference = databaseUsersReference.child(currentUserID).child("photos")
             userPhotosReference.observe(.value, with: { (snapshot) in
+                
+                if snapshot.children.allObjects.count == 0 {
+                    self.noPhotosLabel.isHidden = false
+                } else {
+                    self.noPhotosLabel.isHidden = true
+                }
+
                 let allUserPhotos = snapshot.children
                 while let photoSnapshot = allUserPhotos.nextObject() as? FIRDataSnapshot,
                     let photoDict = photoSnapshot.value as? NSDictionary {
@@ -81,6 +89,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
                                 let photo = Photo(dict: photoDictionary, photoID: photoID) {
                                 self.userImages.append(photo)
                                 print(snapshot.childrenCount)
+                                
                                 if self.userImages.count == Int(snapshot.childrenCount) {
                                     self.uploadedPhotosCollectionView.reloadData()
                                 }
@@ -151,11 +160,13 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     func setUpViewHeirachy() {
+        self.view.backgroundColor = UIColor.instaPrimary()
         self.edgesForExtendedLayout = UIRectEdge(rawValue: 0)
         self.view.addSubview(yourUploadsLabel)
         self.view.addSubview(feedTableView)
         self.view.addSubview(profileImageView)
         self.view.addSubview(uploadedPhotosCollectionView)
+        self.view.addSubview(noPhotosLabel)
         
         uploadedPhotosCollectionView.dataSource = self
         uploadedPhotosCollectionView.delegate = self
@@ -185,8 +196,27 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
             view.height.equalToSuperview().multipliedBy(0.15)
             view.bottom.equalTo(yourUploadsLabel.snp.top)
         }
+        
+        noPhotosLabel.snp.makeConstraints { (view) in
+            view.top.leading.trailing.bottom.equalTo(uploadedPhotosCollectionView)
+        }
     }
     
+    
+    // MARK: - HELPER FUNCTIONS
+    
+    func setNewImageWithFade(imageData: Data) {
+        UIView.animate(withDuration: 0.2, animations: {
+            self.profileImageView.alpha = 0.0
+            self.view.setNeedsLayout()
+        }, completion: { (bool) in
+            self.profileImageView.image = UIImage(data: imageData)
+            UIView.animate(withDuration: 0.2, animations: {
+                self.profileImageView.alpha = 1.0
+                self.view.setNeedsLayout()
+            })
+        })
+    }
     
     // MARK: - TABLEVIEW DATA SOURCE METHODS
     
@@ -293,9 +323,22 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
         return view
     }()
     
+    lazy var noPhotosLabel: UILabel = {
+        let view = UILabel()
+        view.backgroundColor = UIColor.instaPrimary()
+        view.textColor = UIColor.instaAccent()
+        view.text = "YOU HAVE NO UPLOADED PHOTOS"
+        view.font = myFont
+        view.textAlignment = .center
+        view.isHidden = true
+        return view
+    }()
+
+    
     lazy var feedTableView: UITableView = {
         let view = UITableView()
         view.register(ActivityFeedTableViewCell.self, forCellReuseIdentifier: ProfileViewController.activityFeedCellIdentifyer)
+        view.backgroundColor = UIColor.instaPrimary()
         view.dataSource = self
         view.delegate = self
         return view
@@ -303,6 +346,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     var uploadedPhotosCollectionView: PickerCollectionView = {
         let view = PickerCollectionView()
+        view.backgroundColor = UIColor.instaPrimary()
         return view
     }()
 }

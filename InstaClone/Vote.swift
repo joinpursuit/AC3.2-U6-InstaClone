@@ -59,7 +59,7 @@ class Vote {
                         upvotes += 1
                     }
                     else {
-                        upvotes -= 1
+                        downvotes += 1
                     }
                     
                 case true:

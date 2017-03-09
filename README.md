@@ -30,47 +30,6 @@ By funneling images into discrete categories more opportunites for each image to
 
 ![Top in Category](images/Artboards/Top in Category.png)
 
-#### Single Image
-
-![Single Image](images/Artboards/Single Image.png)
-
-### Uploads
-
-#### Main
-
-![Uploads](images/Artboards/Uploads.png)
-
-#### Upload (progress)
-
-![Uploads - Uploading](images/Artboards/Uploads - Uploading.png)
-
-#### Upload (complete)
-
-![Uploads - Success](images/Artboards/Uploads - Success.png)
-
-## Flows
-
-### Login
-
-![Login Flow](images/Flows/login_flow.png)
-
-
-### Main
-
-![Main Flow](images/Flows/main_flow.png)
-
-
-### Upload
-
-![Upload Flow](images/Flows/upload_flow.png)
-
-
-## Implementation Requirements
-
-### Color Palette
-
-![Palette](images/Flows/color_palette.png)
-
 ### Assets
 
 All assets for the app icons can be [found here](images/Assets).

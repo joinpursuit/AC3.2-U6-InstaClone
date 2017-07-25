@@ -50,6 +50,7 @@ class PhotoPickerCollectionViewCell: UICollectionViewCell {
     
     var imageView: UIImageView = {
         let view = UIImageView()
+        view.contentMode = .scaleAspectFill
         return view
     }()
     

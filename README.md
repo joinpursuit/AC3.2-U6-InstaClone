@@ -1,6 +1,14 @@
 # AC3.2-U6-InstaClone
 
-# By Revolution No. 6
+By Revolution No. 6, in first name order:
+
+**Liam Kane:** [Github](https://github.com/liamdkane)
+
+**Tom Seymour:** [Github](https://github.com/seymotom)
+
+**Tong Lin:** [Github](https://github.com/TongLin91)
+
+**Victor Zhong:** [Github](https://github.com/viczhong)
 
 ## Introduction
 
@@ -10,34 +18,23 @@ Each new image is uploaded to one of a set of categories that you care about and
 
 By funneling images into discrete categories more opportunites for each image to feature in a top-list.
 
-## Screens
+## User flow
 
-### Launch Screen
+Launch Screen | Login | Categories
+:---: | :---: | :---:
+![Launch Screen](images/Launch.png) | ![Login Screen](images/Login.png) | ![Categories](images/Categories.png)
+Logo shows up during launch | Register or Login, it's up to you | Category selection, each with animated images
 
-![Launch Screen](images/Artboards/Launch Screen.png)
 
-### Login
-
-![Login](images/Artboards/Login.png)
-
-### Categories
-
-#### Main Screen
-
-![Category Selection](images/Artboards/Category Selection.png)
-
-#### Category
-
-![Top in Category](images/Artboards/Top in Category.png)
-
-### Assets
-
-All assets for the app icons can be [found here](images/Assets).
+See User Photos | Upload Your Own | User Profile
+:---: | :---: | :---:
+![Photos](images/Photos.png) | ![Upload](images/Upload.png) | ![Profile](images/Profile.png)
+See everything that our users have uploaded | Share a photo with the rest of our users | See yourself and your activity
 
 
 ### Backend Services
 
-The backend of the app is implmented in Firebase. 
+The backend of the app is implemented in Firebase. 
 
 * Registration and login uses Firebase's _Authentication_
 * Structured data such as the pre-set list of categories, up- and down- votes use Firebase's _Database_
@@ -52,8 +49,6 @@ within a node in the Firebase database and read into the app for use in any cate
 related feature.
 
 Users select among a pre-defined set of categories to  upload each image into. 
-(Later versions of the app might allow the users to define the categories but this 
-is not a current requirement.)
 
 ### Authentication
 
@@ -65,7 +60,6 @@ The profile page has a profile picture. This is chosen by tapping on the picture
 The user is prompted to choose and upload a photo from the library. The user's up- and 	down- vote history
 and a strip of your uploaded images, fetched from Firebase appear below the profile image.
  
-### Uploads
 
 ##### Browsing
 
